@@ -32,6 +32,11 @@ when@test:
         dbal:
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+            logging: true
+            profiler: true
+        orm:
+            # Assure-toi que les événements de doctrine sont loggés dans le canal "doctrine"
+            logging: true    
 
 when@prod:
     doctrine:

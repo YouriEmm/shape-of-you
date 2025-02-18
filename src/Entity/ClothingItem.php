@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\ClothingItemRepository;
@@ -119,7 +118,7 @@ class ClothingItem
      * @return Collection<int, Wardrobe>
      */
     public function getWardrobes(): Collection
-    {
+     {
         return $this->wardrobes;
     }
 

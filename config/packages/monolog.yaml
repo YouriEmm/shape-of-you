@@ -1,0 +1,85 @@
+monolog:
+    # Déclaration des différents canaux
+    channels:
+        - deprecation  # Les dépréciations seront enregistrées dans un canal dédié si celui-ci existe
+        - doctrine  # Canal dédié aux logs de Doctrine
+
+# Configuration spécifique à l'environnement de développement
+when@dev:
+    monolog:
+        handlers:
+            main:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: debug
+                channels: ["!event"]
+
+            console:
+                type: console
+                process_psr_3_messages: false
+                channels: ["!event", "!doctrine", "!console"]
+
+            # Ajout du handler pour doctrine (généralement pour les requêtes SQL, etc.)
+            doctrine:
+                type: stream
+                path: "%kernel.logs_dir%/doctrine.log"
+                level: debug
+                channels: ["doctrine"]
+
+# Configuration spécifique à l'environnement de test
+when@test:
+    monolog:
+        handlers:
+            main:
+                type: fingers_crossed
+                action_level: error
+                handler: nested
+                excluded_http_codes: [404, 405]
+                channels: ["!event"]
+
+            nested:
+                type: stream
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: debug
+
+            # Ajout du handler pour doctrine
+            doctrine:
+                type: stream
+                path: "%kernel.logs_dir%/doctrine.log"
+                level: debug
+                channels: ["doctrine"]
+
+# Configuration spécifique à l'environnement de production
+when@prod:
+    monolog:
+        handlers:
+            main:
+                type: fingers_crossed
+                action_level: error
+                handler: nested
+                excluded_http_codes: [404, 405]
+                buffer_size: 50
+
+            nested:
+                type: stream
+                path: php://stderr
+                level: debug
+                formatter: monolog.formatter.json
+
+            console:
+                type: console
+                process_psr_3_messages: false
+                channels: ["!event", "!doctrine"]
+
+            deprecation:
+                type: stream
+                channels: [deprecation]
+                path: php://stderr
+                formatter: monolog.formatter.json
+
+            # Ajout du handler pour doctrine
+            doctrine:
+                type: stream
+                path: php://stderr
+                level: debug
+                channels: ["doctrine"]
