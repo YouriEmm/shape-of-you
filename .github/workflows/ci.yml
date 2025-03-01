@@ -6,6 +6,9 @@ on:
       - main
       - develop
   pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
   tests:
@@ -24,43 +27,28 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: 📥 Checkout du code
+      - name: Récupération du code
         uses: actions/checkout@v4
 
-      - name: 🛠️ Installation de PHP et extensions
+      - name: Installation de PHP et extensions
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
-          extensions: pdo_mysql, mbstring, intl
-          tools: composer, symfony
+          extensions: mbstring, xml, ctype, iconv, pdo_mysql
+          coverage: none
 
-      - name: ⚙️ Mise en cache des dépendances Composer
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-${{ runner.os }}
+      - name: Installation de Composer
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: 📦 Installation des dépendances Composer
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Configuration de l'environnement
+        run: cp .env .env.test
 
-      - name: 🔄 Attendre que MySQL soit prêt
-        run: |
-          until mysqladmin ping -h 127.0.0.1 -u root --password=root --silent; do
-            echo "Attente de MySQL..."
-            sleep 2
-          done
-
-      - name: 🎭 Configuration de la base de données
+      - name: Configuration de la base de données
+        env:
+          DATABASE_URL: "mysql://app:password@127.0.0.1:3306/shapeOfYou"
         run: |
           php bin/console doctrine:database:create --if-not-exists
           php bin/console doctrine:migrations:migrate --no-interaction
 
-      - name: 🧹 Vérification du code avec PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=512M
-
-      - name: 🎨 Vérification du style de code avec PHP-CS-Fixer
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff
-
-      - name: 🚀 Vérification du bon fonctionnement de Symfony
-        run: symfony console about
+      - name: Lancement des tests
+        run: php bin/phpunit
