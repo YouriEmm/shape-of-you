@@ -68,4 +68,19 @@
         </button>
     </form>
 
+    <h2 class="text-xl font-semibold mt-6 mb-4 dark:text-white">Générer un Outfit avec l'IA</h2>
+
+    <form action="{{ path('generate_outfit_ai') }}" method="POST" class="space-y-4">
+        <div>
+            <label for="description" class="block dark:text-white">Décris le style que tu veux :</label>
+            <textarea name="description" id="description" minlength="50" required class="p-2 w-full border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
+            <p class="text-sm text-gray-400 dark:text-gray-500">Minimum 50 caractères</p>
+        </div>
+
+        <button type="submit" class="mt-4 bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-500">
+            Générer l'Outfit
+        </button>
+    </form>
+
+
 {% endblock %}

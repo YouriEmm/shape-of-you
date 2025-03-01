@@ -70,4 +70,60 @@ class OpenAIService
         $data = $response->toArray();
         return $data['choices'][0]['message']['content'] ?? [];
     }   
+
+    public function generateOutfit(string $description, array $wardrobeItems)
+    {
+        $itemsList = implode(", ", array_map(function($item) {
+            return "{$item->getName()} (ID: {$item->getId()})";
+        }, $wardrobeItems));
+            
+        $prompt = "Tu es un styliste de mode. À partir de la demande/description suivante : '$description', crée un outfit en utilisant uniquement les vêtements suivants : $itemsList. 
+        Retourne seulement un JSON avec exactement ce format :
+        {
+            'outfit_name': 'Nom de l\'outfit',
+            'items': [
+                { 'name': 'Nom du vêtement', 'id': 'ID du vêtement' },
+                { 'name': 'Autre vêtement', 'id': 'ID du vêtement' }
+            ]
+        }
+        N'inclus aucune autre information ou commentaire en dehors du JSON.";
+    
+        $messages = [
+            [
+                "role" => "user",
+                "content" => $prompt,
+            ],
+        ];
+    
+        try {
+            $response = $this->httpClient->request('POST', 'https://api.openai.com/v1/chat/completions', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->openAIKey,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'model' => 'gpt-4o-mini',
+                    'messages' => $messages,
+                    'max_tokens' => 800,
+                ],
+            ]);
+    
+            $data = $response->toArray();
+    
+            if (isset($data['choices'][0]['message']['content'])) {
+                $generatedOutfit = $data['choices'][0]['message']['content'];
+                return $generatedOutfit;
+            } else {
+                return null;
+            }
+        } catch (\Exception $e) {
+            return [
+                'outfit' => null,
+                'status' => 'error',
+                'message' => 'Erreur lors de l\'appel à l\'API : ' . $e->getMessage(),
+            ];
+        }
+    }
+    
+
 }

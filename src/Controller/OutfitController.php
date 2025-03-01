@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;    
 use App\Entity\Outfit;    
 use App\Repository\ClothingItemRepository;
+use App\Entity\ClothingItem;
+use App\Service\OpenAIService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class OutfitController extends AbstractController
 {
@@ -96,4 +99,61 @@ class OutfitController extends AbstractController
             'search' => $search,
         ]);
     }
+
+
+    #[Route('/outfit/generate', name: 'generate_outfit_ai', methods: ['POST'])]
+    public function generateOutfitAI(Request $request, OpenAIService $openAIService, EntityManagerInterface $entityManager) {
+    
+        $description = $request->request->get('description');
+    
+        if (strlen($description) < 50) {
+            return new JsonResponse(['error' => 'La description doit contenir au moins 50 caractères.'], 400);
+        }
+    
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+    
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur n\'est pas valide.');
+        }
+    
+        $wardrobeItems = $user->getWardrobe()->getItems()->toArray();
+        
+
+        if (!$wardrobeItems) {
+            return new JsonResponse(['error' => 'Aucun vêtement trouvé dans la garde-robe.'], 400);
+        }
+    
+        $outfitData = $openAIService->generateOutfit($description, $wardrobeItems);
+
+        $outfitData = str_replace("'", '"', $outfitData);
+
+        $outfitData = json_decode($outfitData, true);
+
+        if ($outfitData === null) {
+            return new JsonResponse(['error' => 'Erreur de décryptage des données de l\'outfit.'], 500);
+        }
+
+        $outfit = new Outfit();
+        $outfit->setName($outfitData['outfit_name']);
+        $outfit->setOwner($user);
+        $outfit->setCreatedAt(new \DateTime());
+        $outfit->setPublic(false);
+
+        foreach ($outfitData['items'] as $itemData) {
+            $clothingItem = $entityManager->getRepository(ClothingItem::class)->find($itemData['id']);
+            if ($clothingItem) {
+                $outfit->addItem($clothingItem);
+            }
+        }
+
+        $entityManager->persist($outfit);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('outfits_list');
+
+    }
+    
 }
