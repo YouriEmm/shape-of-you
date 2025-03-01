@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class WardrobeController extends AbstractController
 {
@@ -25,7 +24,6 @@ class WardrobeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $user = $this->getUser();
         if (!$user instanceof User) {
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }
@@ -85,7 +83,6 @@ class WardrobeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $user = $this->getUser();
         if (!$user instanceof User) {
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }

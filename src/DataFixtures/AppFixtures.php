@@ -50,7 +50,8 @@ class AppFixtures extends Fixture
                 $outfit = new Outfit();
                 $outfit->setName($faker->word)
                     ->setOwner($user)
-                    ->setCreatedAt($faker->dateTimeThisYear);
+                    ->setCreatedAt($faker->dateTimeThisYear)
+                    ->setPublic(false);
                 $manager->persist($outfit);
 
                 for ($k = 0; $k < 5; $k++) {

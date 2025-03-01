@@ -1,0 +1,72 @@
+{# templates/outfit/outfits.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold mb-4">Mes Outfits</h1>
+
+    {% if outfits is not empty %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for outfit in outfits %}
+                <div class="border p-4 rounded-lg shadow-lg bg-white">
+                    <h2 class="text-lg font-semibold">{{ outfit.name }}</h2>
+                    <p class="text-gray-600">Créé le: {{ outfit.createdAt|date('d/m/Y') }}</p>
+                    <p class="text-gray-600">Statut : {{ outfit.public ? 'Public' : 'Privé' }}</p>
+
+                    <div class="mt-4">
+                        <ul class="space-y-4">
+                            {% for clothing in outfit.items %}
+                                <li class="bg-gray-100 p-2 rounded flex items-center">
+                                    {% if clothing.image %}
+                                        <img src="{{ asset(clothing.image) }}" alt="{{ clothing.name }}" class="w-[100px] h-[100px] object-cover mr-4">
+                                    {% endif %}
+
+                                    <div>
+                                        <strong>{{ clothing.name }}</strong><br>
+ 
+                                        <span>
+                                            {% for category in clothing.categories %}
+                                                {{ category.name }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </span><br>
+
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucun outfit trouvé. Commencez à ajouter des vêtements à vos outfits !</p>
+    {% endif %}
+
+    <h2 class="text-xl font-semibold mt-6 mb-4">Créer un nouvel Outfit</h2>
+    <form action="{{ path('create_outfit') }}" method="POST" class="space-y-4">
+        <div>
+            <label for="name" class="block">Nom de l'Outfit</label>
+            <input type="text" name="name" id="name" required class="p-2 w-full border rounded">
+        </div>
+        
+        <div>
+            <h3 class="font-medium">Choisissez vos vêtements :</h3>
+            {% for item in clothingItems %}
+                <div>
+                    <input type="checkbox" name="items[]" value="{{ item.id }}" id="item-{{ item.id }}">
+                    <label for="item-{{ item.id }}">{{ item.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div>
+            <input type="checkbox" name="public" id="public">
+            <label for="public">Public</label>
+        </div>
+
+        <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded">Créer l'Outfit</button>
+    </form>
+
+{% endblock %}

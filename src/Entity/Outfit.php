@@ -43,6 +43,9 @@ class Outfit
     #[ORM\OneToMany(targetEntity: Publication::class, mappedBy: 'outfit')]
     private Collection $publications;
 
+    #[ORM\Column]
+    private ?bool $public = null;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -171,6 +174,18 @@ class Outfit
                 $publication->setOutfit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isPublic(): ?bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): static
+    {
+        $this->public = $public;
 
         return $this;
     }

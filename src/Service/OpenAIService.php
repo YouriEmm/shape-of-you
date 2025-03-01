@@ -20,16 +20,21 @@ class OpenAIService
         $imageDataUrl = "data:image/jpeg;base64," . $imageBase64;
 
         $prompt = "Analyse minutieusement l'image fournie.\n" .
-            "Identifie chaque vêtement présent et retourne uniquement une réponse respectant exactement la structure suivante :\n" .
-            "Je souhaite avoir dans la partie 'nom' le type de vêtement puis la spécificité du vêtement s'il y en a (par exemple cargo pour un pantalon) puis la couleur.\n" .
-            "Essaie de trouver la marque pour chaque vêtement :\n" .
-            "{\n" .
-            "   'Vêtement 1': { 'Nom': 'T-shirt Blanc Casse', 'categorie': 't-shirt', 'Marque': 'Zara' },\n" .
-            "   'Vêtement 2': { 'Nom': 'Pantalon Cargo Vert Kaki','categorie': 'pantalon', 'Marque': 'H&M' }\n" .
-            "}\n" .
-            "N'inclus aucune autre information ou commentaire en dehors du JSON.\n" .
-            "Voici l'image à analyser :";
+        "Identifie chaque vêtement présent et retourne uniquement une réponse respectant exactement la structure suivante :\n" .
+        "Je souhaite avoir dans la partie 'nom' le type de vêtement suivi de la spécificité du vêtement s'il y en a (par exemple cargo pour un pantalon) et de la couleur.\n" .
+        "Essaie de trouver la marque pour chaque vêtement et fais tout ton possible pour fournir une marque.\n" .
+        "Voici un exemple de la structure attendue :\n" .
+        "{\n" .
+        "   'Vêtement 1': { 'Nom': 'T-shirt Noir Col Rond', 'categorie': 't-shirt', 'Marque': 'Nike' },\n" .
+        "   'Vêtement 2': { 'Nom': 'Jean Slim Bleu Indigo','categorie': 'jean', 'Marque': 'Levi\'s' },\n" .
+        "   'Vêtement 3': { 'Nom': 'Sneakers Blanches', 'categorie': 'chaussures', 'Marque': 'Adidas' },\n" .
+        "   'Vêtement 4': { 'Nom': 'Blouson en Cuir Marron', 'categorie': 'blouson', 'Marque': 'Zara' },\n" .
+        "   'Vêtement 5': { 'Nom': 'Sac à Main Noir', 'categorie': 'accessoire', 'Marque': 'Chanel' }\n" .
+        "}\n" .
+        "N'inclus aucune autre information ou commentaire en dehors du JSON.\n" .
+        "Voici l'image à analyser :";
 
+        
 
         $messages = [
             [
