@@ -1,26 +1,26 @@
-<div class="md:w-2/12 bg-gray-500 text-white h-screen fixed">
+<div class="md:w-2/12 bg-gray-500 text-white dark:bg-gray-800 dark:text-white h-screen fixed">
     <div class="md:hidden fixed top-0.5 left-0.5 z-50">
-        <button class="text-black p-4" id="sidebar-toggle">
+        <button class="text-black dark:text-white p-4" id="sidebar-toggle">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </div>
 
-    <div class="sidebar bg-gray-500 h-full p-4 hidden md:block">
+    <div class="sidebar bg-gray-500 dark:bg-gray-800 h-full p-4 hidden md:block">
 
         <nav class="space-y-6">
             <ul class="space-y-4 mt-8">
-                <li><a href="{{ path('home') }}" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Menu</a></li>
-                <li><a href="{{ path('public_outfits')}}" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Recherche</a></li>
-                <li><a href="{{ path('wardrobe_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Garde Robe</a></li>
-                <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Partenaire</a></li>
-                <li><a href="{{ path('outfits_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Outfits</a></li>
+                <li><a href="{{ path('home') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Menu</a></li>
+                <li><a href="{{ path('public_outfits')}}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Recherche</a></li>
+                <li><a href="{{ path('wardrobe_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Garde Robe</a></li>
+                <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Partenaire</a></li>
+                <li><a href="{{ path('outfits_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Outfits</a></li>
             </ul>
         </nav>
 
         {% if app.user is not null %}
-            <div class="text-white text-left py-4">
+            <div class="text-white dark:text-gray-300 text-left py-4">
                 Nom : {{ app.user.name }}
             </div>
         {% endif %}
@@ -28,13 +28,13 @@
         <div class="absolute bottom-8 w-full">
             {% if app.user is null %}
                 <a href="{{ path('app_login') }}">
-                    <button class="w-2/3 bg-blue-600 text-white py-2 rounded-lg" id="login-btn">
+                    <button class="w-2/3 bg-blue-500 text-white py-2 rounded-lg" id="login-btn">
                         Se connecter
                     </button>
                 </a>
             {% else %}
                 <form action="{{ path('app_logout') }}" method="POST">
-                    <button type="submit" class="w-2/3 bg-red-600 text-white py-2 rounded-lg">
+                    <button type="submit" class="w-2/3 bg-red-500 text-white py-2 rounded-lg">
                         Se déconnecter
                     </button>
                 </form>
