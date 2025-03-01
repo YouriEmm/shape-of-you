@@ -8,10 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,8 +30,8 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $role = null;
+    #[ORM\Column(type: 'json')] 
+    private array $roles = [];
 
     /**
      * @var Collection<int, Outfit>
@@ -114,14 +116,17 @@ class User
         return $this;
     }
 
-    public function getRole(): ?string
+    public function getRole(): ?array
     {
-        return $this->role;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRole(string $role): static
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
@@ -147,7 +152,6 @@ class User
     public function removeOutfit(Outfit $outfit): static
     {
         if ($this->outfits->removeElement($outfit)) {
-            // set the owning side to null (unless already changed)
             if ($outfit->getOwner() === $this) {
                 $outfit->setOwner(null);
             }
@@ -163,7 +167,6 @@ class User
 
     public function setWardrobe(Wardrobe $wardrobe): static
     {
-        // set the owning side of the relation if necessary
         if ($wardrobe->getOwner() !== $this) {
             $wardrobe->setOwner($this);
         }
@@ -194,7 +197,6 @@ class User
     public function removeHistoryEntry(HistoryEntry $historyEntry): static
     {
         if ($this->historyEntries->removeElement($historyEntry)) {
-            // set the owning side to null (unless already changed)
             if ($historyEntry->getOwner() === $this) {
                 $historyEntry->setOwner(null);
             }
@@ -224,7 +226,6 @@ class User
     public function removePublication(Publication $publication): static
     {
         if ($this->publications->removeElement($publication)) {
-            // set the owning side to null (unless already changed)
             if ($publication->getOwner() === $this) {
                 $publication->setOwner(null);
             }
@@ -254,7 +255,6 @@ class User
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getOwner() === $this) {
                 $comment->setOwner(null);
             }
@@ -284,12 +284,43 @@ class User
     public function removeLike(Like $like): static
     {
         if ($this->likes->removeElement($like)) {
-            // set the owning side to null (unless already changed)
             if ($like->getOwner() === $this) {
                 $like->setOwner(null);
             }
         }
 
         return $this;
+    }
+
+    
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+        /**
+     * The public representation of the user (e.g. a username, an email address, etc.)
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 }

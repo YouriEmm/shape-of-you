@@ -20,5 +20,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # OpenAIService configuration
+    App\Service\OpenAIService:
+        arguments:
+            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+            $openAIKey: '%env(OPENAI_API_KEY)%'

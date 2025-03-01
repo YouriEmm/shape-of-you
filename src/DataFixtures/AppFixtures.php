@@ -28,12 +28,18 @@ class AppFixtures extends Fixture
             $categories[] = $category;
         }
 
+        $roles = ['ROLE_USER', 'ROLE_ADMIN'];
+        $randomRole = $roles[array_rand($roles)];
+
+
         for ($i = 0; $i < 10; $i++) {
+            $randomRole = $roles[array_rand($roles)];
             $user = new User();
             $user->setName($faker->name)
                 ->setEmail($faker->email)
                 ->setPassword(password_hash('password', PASSWORD_BCRYPT))
-                ->setRole('ROLE_USER');
+                ->setRoles([$randomRole]);
+
             $manager->persist($user);
 
             $wardrobe = new Wardrobe();
