@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\OutfitRepository;
 
 #[Route('/user')]
 final class UserController extends AbstractController
@@ -50,6 +51,22 @@ final class UserController extends AbstractController
         ]);
     }
 
+
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function show(User $user, OutfitRepository $outfitRepository): Response
+    {
+        $outfits = $outfitRepository->findBy([
+            'owner' => $user,
+            'public' => true,
+        ]);
+    
+        return $this->render('user/show.html.twig', [
+            'owner' => $user,
+            'outfits' => $outfits,
+        ]);
+    }
+    
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
