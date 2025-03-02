@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold mb-4 dark:text-white">Liste des utilisateurs</h1>
+
+    {% for user in users %}
+        <div class="border p-4 rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-gray-300 mb-4">
+            <h2 class="text-lg font-semibold dark:text-white">{{ user.name }}</h2>
+            <p class="text-gray-600 dark:text-gray-400">Email : {{ user.email }}</p>
+
+            <h3 class="text-xl font-semibold mt-4 dark:text-white">Outfits publics</h3>
+            {% set publicOutfits = user.outfits|filter(outfit => outfit.public) %}
+            {% if publicOutfits is not empty %}
+                <ul class="space-y-4 mt-2">
+                    {% for outfit in publicOutfits %}
+                        <li class="bg-gray-100 dark:bg-gray-700 p-2 rounded flex items-center">
+                            <div>
+                                <strong class="dark:text-white">{{ outfit.name }}</strong><br>
+                                <span class="dark:text-gray-300">
+                                    Créé le: {{ outfit.createdAt|date('d/m/Y') }}
+                                </span><br>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-600 dark:text-gray-400">Cet utilisateur n'a pas d'outfits publics.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

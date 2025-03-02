@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold mb-4 dark:text-white">Mon Profil</h1>
+
+    <div class="border p-4 rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-gray-300">
+        <p><strong>Nom :</strong> {{ user.name }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+
+        <h2 class="text-xl font-semibold mt-4 dark:text-white">Modifier mes informations</h2>
+
+        {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, {'attr': {'class': 'w-full p-2 border rounded dark:bg-gray-700 dark:text-white'}}) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'w-full p-2 border rounded dark:bg-gray-700 dark:text-white'}}) }}
+            </div>
+
+
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Enregistrer
+            </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
