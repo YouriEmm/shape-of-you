@@ -10,6 +10,24 @@
             {% if clothingItem.image %}
                 <img src="{{ asset(clothingItem.image) }}" alt="{{ clothingItem.name }}" class="w-32 h-32 object-cover mt-2">
             {% endif %}
+
+            <p class="text-gray-600 dark:text-gray-400">Catégorie : {{ clothingItem.category }}</p>
+
+            {% if clothingItem.brand %}
+                {% if clothingItem.brand.website %}
+                    <p class="text-blue-600 dark:text-blue-900">Marque : <a href="{{ clothingItem.brand.website }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ clothingItem.brand.name }}</a></p>
+                {% else %}
+                    <p class="text-gray-600 dark:text-gray-400">Marque : {{ clothingItem.brand.name }}</p>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-600 dark:text-gray-400">Marque : Non spécifiée</p>
+            {% endif %}
+
+            <form action="{{ path('delete_clothing_item', {'id': clothingItem.id}) }}" method="POST" class="mt-4">
+                <button type="submit" class="bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-500">
+                    Supprimer
+                </button>
+            </form>
         </div>
     {% else %}
         <p class="dark:text-gray-300">Aucun vêtement disponible.</p>

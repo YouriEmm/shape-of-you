@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\ClothingItem;
 use App\Entity\User;
 use App\Entity\Wardrobe;
+use App\Entity\Brand;
 use App\Repository\ClothingItemRepository;
+use App\Repository\PartnerRepository;
 use App\Entity\Category;
+use App\Entity\Partner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +20,12 @@ class WardrobeController extends AbstractController
 {
 
     #[Route('/wardrobe/add', name: 'add_to_wardrobe', methods: ['POST'])]
-    public function addToWardrobe(Request $request, ClothingItemRepository $clothingItemRepository, EntityManagerInterface $entityManager)
-    {
+    public function addToWardrobe(
+        Request $request, 
+        ClothingItemRepository $clothingItemRepository, 
+        PartnerRepository $brandRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
@@ -28,12 +35,12 @@ class WardrobeController extends AbstractController
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }
 
-
         $name = $request->request->get('name');
         $category = $request->request->get('category');
         $image = $request->request->get('image');
+        $brandName = $request->request->get('brand'); 
 
-        if (!$name || !$category || !$image) {
+        if (!$name || !$category || !$image || !$brandName) {
             $this->addFlash('error', 'Données invalides.');
             return $this->redirectToRoute('home');
         }
@@ -47,6 +54,16 @@ class WardrobeController extends AbstractController
             $clothingItem->setName($name);
             $clothingItem->setImage($image);
             $clothingItem->setCategory($category);
+
+            $brand = $brandRepository->findOneBy(['name' => $brandName]);
+
+            if (!$brand) {
+                $brand = new Partner(); 
+                $brand->setName($brandName);
+                $entityManager->persist($brand);
+            }
+
+            $clothingItem->setBrand($brand);
             $entityManager->persist($clothingItem);
             $entityManager->flush();
         }
@@ -62,9 +79,7 @@ class WardrobeController extends AbstractController
         $wardrobe->addItem($clothingItem);
         $entityManager->flush();
 
-        $this->addFlash('success', 'L\'élément a été ajouté à votre garde-robe.');
         return $this->redirectToRoute('home');
-
     }
 
 

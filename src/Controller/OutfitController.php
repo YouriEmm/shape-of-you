@@ -186,5 +186,19 @@ class OutfitController extends AbstractController
 
         return $this->redirectToRoute('outfits_list');
     }
+
+    #[Route('/outfit/{id}/delete', name: 'delete_outfit', methods: ['POST'])]
+    public function deleteClothingItem($id, EntityManagerInterface $entityManager, OutfitRepository $outfitRepository)
+    {
+        $clothingItem = $outfitRepository->find($id);
+
+        if ($clothingItem) {
+            $entityManager->remove($clothingItem);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('outfits_list');
+    }
+
     
 }

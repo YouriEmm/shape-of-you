@@ -41,6 +41,12 @@
                             {% endfor %}
                         </ul>
                     </div>
+
+                    <form action="{{ path('delete_outfit', {'id': outfit.id}) }}" method="POST" class="mt-4">
+                        <button type="submit" class="bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-500">
+                            Supprimer l'Outfit
+                        </button>
+                    </form>
                 </div>
             {% endfor %}
         </div>

@@ -85,7 +85,7 @@ class ClothingDetectionController extends AbstractController
             $detectedClothings[] = [
                 'nom' => $item['Nom'],
                 'category' => $item['categorie'],
-                'marque' => $item['Marque'],
+                'brand' => $item['Marque'],
                 'image_path' => $detectedClothing->getImagePath(),
             ];
         }
