@@ -66,6 +66,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'owner')]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, DetectedClothing>
+     */
+    #[ORM\OneToMany(targetEntity: DetectedClothing::class, mappedBy: 'owner')]
+    private Collection $detectedClothing;
+
     public function __construct()
     {
         $this->outfits = new ArrayCollection();
@@ -73,6 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->publications = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->detectedClothing = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -322,5 +329,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    /**
+     * @return Collection<int, DetectedClothing>
+     */
+    public function getDetectedClothing(): Collection
+    {
+        return $this->detectedClothing;
+    }
+
+    public function addDetectedClothing(DetectedClothing $detectedClothing): static
+    {
+        if (!$this->detectedClothing->contains($detectedClothing)) {
+            $this->detectedClothing->add($detectedClothing);
+            $detectedClothing->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetectedClothing(DetectedClothing $detectedClothing): static
+    {
+        if ($this->detectedClothing->removeElement($detectedClothing)) {
+            // set the owning side to null (unless already changed)
+            if ($detectedClothing->getOwner() === $this) {
+                $detectedClothing->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }

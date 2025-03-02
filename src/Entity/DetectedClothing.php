@@ -19,6 +19,9 @@ class DetectedClothing
     #[ORM\Column]
     private array $detectedItems = [];
 
+    #[ORM\ManyToOne(inversedBy: 'detectedClothing')]
+    private ?User $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class DetectedClothing
     public function setDetectedItems(array $detectedItems): static
     {
         $this->detectedItems = $detectedItems;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

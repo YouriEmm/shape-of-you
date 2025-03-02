@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\DetectedClothing;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,7 @@ class ClothingDetectionController extends AbstractController
         SessionInterface $session
     ): Response {
     
+        
         $file = $request->files->get('image');
         if (!$file instanceof UploadedFile) {
             return $this->json(['error' => 'Aucune image fournie'], Response::HTTP_BAD_REQUEST);
@@ -64,6 +66,8 @@ class ClothingDetectionController extends AbstractController
             return $this->json(['error' => 'Aucun vêtement détecté'], Response::HTTP_BAD_REQUEST);
         }
     
+        $user = $this->getUser();
+
         $detectedClothings = [];
         foreach ($detectedItems as $key => $item) {
             if (!is_array($item) || !isset($item['Nom'])) {
@@ -73,7 +77,10 @@ class ClothingDetectionController extends AbstractController
             $detectedClothing = new DetectedClothing();
             $detectedClothing->setImagePath('/uploads/' . $fileName);
             $detectedClothing->setDetectedItems([$item]);
-    
+            if ($user) {
+                $detectedClothing->setOwner($user);
+            }
+
             $entityManager->persist($detectedClothing);
             $detectedClothings[] = [
                 'nom' => $item['Nom'],
@@ -90,4 +97,36 @@ class ClothingDetectionController extends AbstractController
 
     }
     
+    #[Route('/detected-outfits', name: 'detected_outfits_list')]
+    public function listDetectedOutfits(EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+    
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+    
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur n\'est pas valide.');
+        }   
+    
+        $detectedOutfits = $user->getDetectedClothing();
+        echo(json_encode($detectedOutfits));
+        foreach ($detectedOutfits as $outfit) {
+            foreach ($outfit->getDetectedItems() as &$clothing) {
+                if (is_string($clothing)) {
+                    $decoded = json_decode($clothing, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $clothing = $decoded;
+                    }
+                }
+            }
+        }
+    
+        return $this->render('detected_outfit_list.html.twig', [
+            'detectedOutfits' => $detectedOutfits,
+        ]);
+    }
+    
+
 }

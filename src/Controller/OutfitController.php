@@ -155,5 +155,17 @@ class OutfitController extends AbstractController
         return $this->redirectToRoute('outfits_list');
 
     }
+
+    #[Route('/outfit/{id}/toggle-public', name: 'toggle_outfit_public', methods: ['POST'])]
+
+    public function toggleOutfitPublic(Outfit $outfit, EntityManagerInterface $entityManager)
+    {
+        $outfit->setPublic(!$outfit->isPublic());
+
+        $entityManager->persist($outfit);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('outfits_list');
+    }
     
 }
