@@ -49,6 +49,7 @@ class AppFixtures extends Fixture
                 for ($k = 0; $k < 5; $k++) {
                     $clothingItem = new ClothingItem();
                     $clothingItem->setName($faker->word)
+                        ->setCategory("test")
                         ->setImage($faker->imageUrl());
 
                     $manager->persist($clothingItem);
@@ -60,6 +61,7 @@ class AppFixtures extends Fixture
             for ($l = 0; $l < 5; $l++) {
                 $clothingItem = new ClothingItem();
                 $clothingItem->setName($faker->word)
+                    ->setCategory("test")
                     ->setImage($faker->imageUrl());
 
                 $manager->persist($clothingItem);

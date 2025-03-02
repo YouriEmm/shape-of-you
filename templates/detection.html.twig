@@ -36,12 +36,12 @@
                     {% for clothing in detected_clothing %}
                         <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                             <strong class="text-lg text-gray-800 dark:text-white">{{ clothing.nom }}</strong><br>
-                            <span class="text-gray-600 dark:text-gray-300">Catégorie: {{ clothing.categorie }}</span><br>
+                            <span class="text-gray-600 dark:text-gray-300">Catégorie: {{ clothing.category }}</span><br>
                             <span class="text-gray-600 dark:text-gray-300">Marque: {{ clothing.marque }}</span><br>
 
                             <form action="{{ path('add_to_wardrobe') }}" method="POST" class="mt-2">
                                 <input type="hidden" name="name" value="{{ clothing.nom }}">
-                                <input type="hidden" name="categorie" value="{{ clothing.categorie }}">
+                                <input type="hidden" name="category" value="{{ clothing.category }}">
                                 <input type="hidden" name="image" value="{{ clothing.image_path }}">
                                 <button type="submit"
                                     class="bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-400">

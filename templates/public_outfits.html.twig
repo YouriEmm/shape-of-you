@@ -33,9 +33,7 @@
                                     <div>
                                         <strong class="dark:text-white">{{ clothing.name }}</strong><br>
                                         <span class="dark:text-gray-300">
-                                            {% for category in clothing.categories %}
-                                                {{ category.name }}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
+                                            Catégorie : {{ clothing.category }}
                                         </span><br>
                                     </div>
                                 </li>

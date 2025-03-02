@@ -30,12 +30,12 @@ class WardrobeController extends AbstractController
 
 
         $name = $request->request->get('name');
-        $categorie = $request->request->get('categorie');
+        $category = $request->request->get('category');
         $image = $request->request->get('image');
 
-        if (!$name || !$categorie || !$image) {
+        if (!$name || !$category || !$image) {
             $this->addFlash('error', 'Données invalides.');
-            return $this->redirectToRoute('detection_page');
+            return $this->redirectToRoute('home');
         }
 
         $existingItem = $clothingItemRepository->findOneBy(['name' => $name, 'image' => $image]);
@@ -46,14 +46,7 @@ class WardrobeController extends AbstractController
             $clothingItem = new ClothingItem();
             $clothingItem->setName($name);
             $clothingItem->setImage($image);
-
-            $categoryRepository = $entityManager->getRepository(Category::class);
-            $category = $categoryRepository->findOneBy(['name' => $categorie]);
-
-            if ($category) {
-                $clothingItem->addCategory($category);
-            }
-
+            $clothingItem->setCategory($category);
             $entityManager->persist($clothingItem);
             $entityManager->flush();
         }

@@ -84,7 +84,7 @@ class ClothingDetectionController extends AbstractController
             $entityManager->persist($detectedClothing);
             $detectedClothings[] = [
                 'nom' => $item['Nom'],
-                'categorie' => $item['categorie'],
+                'category' => $item['categorie'],
                 'marque' => $item['Marque'],
                 'image_path' => $detectedClothing->getImagePath(),
             ];
