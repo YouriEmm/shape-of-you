@@ -80,25 +80,44 @@ class OutfitController extends AbstractController
 
 
     #[Route('/public-outfits', name: 'public_outfits')]
-    public function index(OutfitRepository $outfitRepository, Request $request)
+    public function index(OutfitRepository $outfitRepository, Request $request, EntityManagerInterface $entityManager)
     {
         $queryBuilder = $outfitRepository->createQueryBuilder('o')
             ->where('o.public = :public')
             ->setParameter('public', true);
-
+    
         $search = $request->query->get('search');
         if ($search) {
             $queryBuilder->andWhere('o.name LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
         }
-
+    
+        $categoryFilter = $request->query->get('category');
+        if ($categoryFilter) {
+            $queryBuilder
+                ->join('o.items', 'c')
+                ->andWhere('c.category = :category')
+                ->setParameter('category', $categoryFilter);
+        }
+    
         $outfits = $queryBuilder->getQuery()->getResult();
-
+    
+        $categories = $entityManager->createQueryBuilder()
+            ->select('DISTINCT c.category')
+            ->from('App\Entity\ClothingItem', 'c')
+            ->where('c.category IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    
         return $this->render('public_outfits.html.twig', [
             'outfits' => $outfits,
             'search' => $search,
+            'categoryFilter' => $categoryFilter,
+            'categories' => $categories,
         ]);
     }
+    
+    
 
 
     #[Route('/outfit/generate', name: 'generate_outfit_ai', methods: ['POST'])]

@@ -5,14 +5,26 @@
 {% block body %}
     <h1 class="text-2xl font-bold mb-4 dark:text-white">Outfits Publics</h1>
 
-    <form method="get" class="mb-4">
+    <form method="get" class="mb-4 flex gap-2">
         <input type="text" name="search" value="{{ search }}" placeholder="Recherche par nom"
-               class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 ml-4 mr-4">
+
+        <select name="category" class=" ml-4 mr-4 border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="">Toutes les catégories</option>
+            {% for category in categories %}
+                <option value="{{ category.category }}" {% if categoryFilter == category.category %}selected{% endif %}>
+                    {{ category.category }}
+                </option>
+            {% endfor %}
+        </select>
+
         <button type="submit"
                 class="bg-blue-500 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-600 dark:hover:bg-blue-500">
             Rechercher
         </button>
     </form>
+
+
 
     {% if outfits is not empty %}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
