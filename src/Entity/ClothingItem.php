@@ -17,10 +17,6 @@ class ClothingItem
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'clothingItems')]
-    #[ORM\JoinTable(name: 'clothing_items_categories')]  
-    private Collection $categories;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -36,9 +32,14 @@ class ClothingItem
     #[ORM\ManyToMany(targetEntity: Wardrobe::class, mappedBy: 'items')]
     private Collection $wardrobes;
 
+    #[ORM\ManyToOne(inversedBy: 'clothingItems')]
+    private ?Partner $brand = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $category = null;
+
     public function __construct()
     {
-        $this->categories = new ArrayCollection(); 
         $this->outfits = new ArrayCollection();
         $this->wardrobes = new ArrayCollection();
     }
@@ -59,24 +60,6 @@ class ClothingItem
         return $this;
     }
 
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    public function addCategory(Category $category): static
-    {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-        }
-        return $this;
-    }
-
-    public function removeCategory(Category $category): static
-    {
-        $this->categories->removeElement($category);
-        return $this;
-    }
 
     public function getImage(): ?string
     {
@@ -137,6 +120,30 @@ class ClothingItem
         if ($this->wardrobes->removeElement($wardrobe)) {
             $wardrobe->removeItem($this);
         }
+
+        return $this;
+    }
+
+    public function getBrand(): ?Partner
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Partner $brand): static
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(string $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

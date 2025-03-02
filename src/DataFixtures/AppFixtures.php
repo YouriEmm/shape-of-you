@@ -19,14 +19,6 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        $categories = [];
-        for ($i = 0; $i < 5; $i++) {
-            $category = new Category();
-            $category->setName($faker->word);
-            $category->setDescription($faker->sentence);
-            $manager->persist($category);
-            $categories[] = $category;
-        }
 
         $roles = ['ROLE_USER', 'ROLE_ADMIN'];
         $randomRole = $roles[array_rand($roles)];
@@ -59,7 +51,6 @@ class AppFixtures extends Fixture
                     $clothingItem->setName($faker->word)
                         ->setImage($faker->imageUrl());
 
-                    $clothingItem->addCategory($faker->randomElement($categories));
                     $manager->persist($clothingItem);
 
                     $outfit->addItem($clothingItem);
@@ -71,19 +62,21 @@ class AppFixtures extends Fixture
                 $clothingItem->setName($faker->word)
                     ->setImage($faker->imageUrl());
 
-                $clothingItem->addCategory($faker->randomElement($categories));
                 $manager->persist($clothingItem);
 
                 $wardrobe->addItem($clothingItem);
             }
         }
 
-        for ($m = 0; $m < 3; $m++) {
-            $partner = new Partner();
-            $partner->setName($faker->company)
-                ->setWebsite($faker->url);
-            $manager->persist($partner);
-        }
+            $partner1 = new Partner();
+            $partner1->setName("Zara")
+                     ->setWebsite("https://www.zara.com/fr/");
+            $manager->persist($partner1);
+
+            $partner2 = new Partner();
+            $partner2->setName("Levi's")
+                     ->setWebsite("https://www.levi.com/FR/fr_FR/");
+            $manager->persist($partner1);
 
         for ($n = 0; $n < 5; $n++) {
             $aiNotification = new AINotification();
