@@ -42,6 +42,11 @@
                         Se connecter
                     </button>
                 </a>
+                <nav class="space-y-6">
+                    <ul class="space-y-4 mt-8">
+                        <li><a href="{{ path('app_user_new') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Créer un compte</a></li>
+                    </ul>
+                </nav>
             {% else %}
                 <form action="{{ path('app_logout') }}" method="POST">
                     <button type="submit" class="w-2/3 bg-red-500 text-white py-2 rounded-lg">

@@ -109,4 +109,37 @@ class WardrobeController extends AbstractController
         ]);
     }
 
+    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if ($request->isMethod('POST')) {
+            $user = new User();
+    
+            $name = $request->request->get('name');
+            $email = $request->request->get('email');
+            $password = $request->request->get('password');
+    
+            if (!$name || !$email || !$password) {
+                $this->addFlash('error', 'Tous les champs sont requis.');
+                return $this->redirectToRoute('app_user_new');
+            }
+    
+            $user->setName($name);
+            $user->setEmail($email);
+            
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            $user->setPassword($hashedPassword);
+    
+            $user->setRoles(['ROLE_USER']);
+    
+            $entityManager->persist($user);
+            $entityManager->flush();
+    
+            $this->addFlash('success', 'Compte créé avec succès !');
+            return $this->redirectToRoute('home');
+        }
+    
+        return $this->render('user/new.html.twig');
+    }
+
 }

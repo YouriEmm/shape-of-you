@@ -36,6 +36,13 @@ class OutfitController extends AbstractController
         $outfits = $outfitRepository->findBy(['owner' => $user]);
         
         $wardrobe = $user->getWardrobe();
+        if (!$wardrobe) {
+            return $this->render('outfits.html.twig', [
+                'outfits' => [],
+                'clothingItems' => [],
+            ]);
+        }
+
         $clothingItems = $wardrobe->getItems();
 
         return $this->render('outfits.html.twig', [
