@@ -33,10 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')] 
     private array $roles = [];
 
-    /**
-     * @var Collection<int, Outfit>
-     */
-    #[ORM\OneToMany(targetEntity: Outfit::class, mappedBy: 'owner')]
+    #[ORM\OneToMany(targetEntity: Outfit::class, mappedBy: 'owner', cascade: ['remove'])]
     private Collection $outfits;
 
     #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
@@ -69,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, DetectedClothing>
      */
-    #[ORM\OneToMany(targetEntity: DetectedClothing::class, mappedBy: 'owner')]
+    #[ORM\OneToMany(targetEntity: DetectedClothing::class, mappedBy: 'owner', cascade: ['remove'])]
     private Collection $detectedClothing;
 
     public function __construct()

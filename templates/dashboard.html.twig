@@ -59,7 +59,7 @@
                     </div>
                     <div>
                         <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
-                        <form action="{{ path('app_dashboard') }}" method="POST" style="display:inline-block;">
+                        <form action="{{ path('delete_user_admin', {'id': user.id}) }}" method="POST" style="display:inline-block;">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="user_id" value="{{ user.id }}">
                             <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>

@@ -41,20 +41,6 @@ class DashboardController extends AbstractController
         $topUserOutfitCounts = array_column($topUsers, 'outfitCount');
 
         $users = $userRepository->findAll();
-
-        if ($request->isMethod('DELETE')) {
-            $userId = $request->request->get('user_id');
-            $user = $userRepository->find($userId);
-
-            if ($user) {
-                $entityManager->remove($user);
-                $entityManager->flush();
-                
-                return $this->redirectToRoute('app_dashboard');
-            }
-
-            return $this->redirectToRoute('app_dashboard');
-        }
         
         if ($request->isMethod('POST')) {
             $data = $request->request->all();
@@ -82,4 +68,18 @@ class DashboardController extends AbstractController
             'users' => $users,
         ]);
     }
+
+    #[Route('/dashboard/user/{id}/delete', name: 'delete_user_admin', methods: ['POST'])]
+    public function deleteClothingItem($id, EntityManagerInterface $entityManager, UserRepository $userRepository)
+    {
+        $user = $userRepository->find($id);
+
+        if ($user) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_dashboard');
+    }
+
 }
