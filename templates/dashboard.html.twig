@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-6">Dashboard Admin</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Statistiques Générales</h3>
+            <p class="text-gray-800 dark:text-gray-300">Total Utilisateurs : <strong>{{ totalUsers }}</strong></p>
+
+        </div>
+
+        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow w-full">
+            <h3 class="text-xl font-semibold dark:text-white mb-2">Top 5 Utilisateurs avec le plus d'outfits</h3>
+            <div class="w-full">
+                <canvas id="topUsersChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Outfits Publics vs Privés</h3>
+            <canvas id="outfitChart"></canvas>
+        </div>
+    </div>
+
+    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+        <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Utilisateur</h3>
+        <form method="POST" action="{{ path('app_dashboard') }}">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-semibold text-gray-700">Nom</label>
+                <input type="text" id="name" name="name" class="mt-1 p-2 w-full rounded border" required>
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-semibold text-gray-700">Email</label>
+                <input type="email" id="email" name="email" class="mt-1 p-2 w-full rounded border" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-semibold text-gray-700">Mot de Passe</label>
+                <input type="password" id="password" name="password" class="mt-1 p-2 w-full rounded border" required>
+            </div>
+            <div class="mb-4">
+                <input type="hidden" id="id" name="id" value="">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded">Enregistrer</button>
+        </form>
+    </div>
+
+    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+        <h3 class="text-xl font-semibold dark:text-white">Liste des Utilisateurs</h3>
+        <ul class="space-y-4 mt-2">
+            {% for user in users %}
+                <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <strong class="text-lg dark:text-white">{{ user.name }}</strong>
+                        <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
+                        <form action="{{ path('app_dashboard') }}" method="POST" style="display:inline-block;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctxUsers = document.getElementById("topUsersChart").getContext("2d");
+        new Chart(ctxUsers, {
+            type: "bar",
+            data: {
+                labels: {{ topUserNames|json_encode|raw }},
+                datasets: [{
+                    label: "Nombre d'outfits",
+                    data: {{ topUserOutfitCounts|json_encode|raw }},
+                    backgroundColor: "#3498db",
+                    borderColor: "#2980b9",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var ctxOutfits = document.getElementById("outfitChart").getContext("2d");
+        new Chart(ctxOutfits, {
+            type: "doughnut",
+            data: {
+                labels: ["Privé", "Public"],
+                datasets: [{
+                    data: [{{ totalOutfits - publicOutfits }}, {{ publicOutfits }}],
+                    backgroundColor: ["#e74c3c", "#2ecc71"]
+                }]
+            }
+        });
+    });
+
+    function editUser(id, name, email) {
+        document.getElementById('id').value = id;
+        document.getElementById('name').value = name;
+        document.getElementById('email').value = email;
+    }
+</script>
+{% endblock %}

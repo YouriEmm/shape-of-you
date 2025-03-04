@@ -31,6 +31,9 @@
                             Utilisateurs
                         </a>
                     </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('app_dashboard') }}" class="mt-4 block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Dashboard</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         {% endif %}
