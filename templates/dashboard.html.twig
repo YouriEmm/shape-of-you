@@ -29,6 +29,7 @@
     <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
         <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Utilisateur</h3>
         <form method="POST" action="{{ path('app_dashboard') }}">
+            <input type="hidden" name="user_submit" value="1">
             <div class="mb-4">
                 <label for="name" class="block text-sm font-semibold text-gray-700">Nom</label>
                 <input type="text" id="name" name="name" class="mt-1 p-2 w-full rounded border" required>
@@ -54,7 +55,11 @@
             {% for user in users %}
                 <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
                     <div>
-                        <strong class="text-lg dark:text-white">{{ user.name }}</strong>
+                    <strong>
+                        <a href="{{ path('app_user_show', { 'id': user.id }) }}" class="text-lg dark:text-white" style="cursor: pointer">
+                            {{ user.name }}
+                        </a>
+                    </strong> 
                         <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
                     </div>
                     <div>
@@ -70,7 +75,43 @@
         </ul>
     </div>
 
-    
+
+    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+        <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Partenaire</h3>
+        <form method="POST" action="{{ path('app_dashboard') }}">
+            <input type="hidden" name="partner_submit" value="1">
+            <input type="hidden" id="partner_id" name="partner_id" value="">
+            <div class="mb-4">
+                <label for="partner_name" class="block text-sm font-semibold text-gray-700">Nom</label>
+                <input type="text" id="partner_name" name="partner_name" class="mt-1 p-2 w-full rounded border" required>
+            </div>
+            <div class="mb-4">
+                <label for="partner_url" class="block text-sm font-semibold text-gray-700">URL</label>
+                <input type="url" id="partner_url" name="partner_url" class="mt-1 p-2 w-full rounded border">
+            </div>
+            <button type="submit" class="bg-green-500 text-white p-2 rounded">Enregistrer</button>
+        </form>
+    </div>
+
+    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+        <h3 class="text-xl font-semibold dark:text-white">Liste des Partenaires</h3>
+        <ul class="space-y-4 mt-2">
+            {% for partner in partners %}
+                <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <strong class="text-lg dark:text-white">{{ partner.name }}</strong>
+                        <p class="text-gray-600 dark:text-gray-400"><a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a></p>
+                    </div>
+                    <div>
+                        <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editPartner('{{ partner.id }}', '{{ partner.name }}', '{{ partner.website }}')">Modifier</a>
+                        <form action="{{ path('delete_partner_admin', {'id': partner.id}) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -119,5 +160,12 @@
         document.getElementById('name').value = name;
         document.getElementById('email').value = email;
     }
+
+    function editPartner(id, name, website) {
+        document.getElementById('partner_id').value = id;
+        document.getElementById('partner_name').value = name;
+        document.getElementById('partner_url').value = website;
+    }
+
 </script>
 {% endblock %}

@@ -5,8 +5,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Partner;
 use App\Repository\UserRepository;
 use App\Repository\OutfitRepository;
+use App\Repository\PartnerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +24,8 @@ class DashboardController extends AbstractController
         UserRepository $userRepository, 
         OutfitRepository $outfitRepository, 
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PartnerRepository $partnerRepository
     ): Response {
         $totalUsers = $userRepository->count([]);
         $totalOutfits = $outfitRepository->count([]);
@@ -41,8 +44,9 @@ class DashboardController extends AbstractController
         $topUserOutfitCounts = array_column($topUsers, 'outfitCount');
 
         $users = $userRepository->findAll();
+        $partners = $partnerRepository->findAll();
         
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('POST') && $request->request->has('user_submit')) {
             $data = $request->request->all();
             $userId = $data['id'] ?? null;
             
@@ -51,12 +55,29 @@ class DashboardController extends AbstractController
             $user->setName($data['name']);
             $user->setEmail($data['email']);
             $user->setPassword(password_hash($data['password'], PASSWORD_BCRYPT));
-            $user->setRoles(['ROLE_USER']); 
+            $user->setRoles(['ROLE_USER']);
 
             $entityManager->persist($user);
             $entityManager->flush();
-            
+
             $this->addFlash('success', 'Utilisateur créé/modifié avec succès !');
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if ($request->isMethod('POST') && $request->request->has('partner_submit')) {
+            $data = $request->request->all();
+
+            $partnerId = $data['partner_id'] ?? null;
+            $partner = $partnerId ? $partnerRepository->find($partnerId) : new Partner();
+            
+            $partner->setName($data['partner_name']);
+            $partner->setWebsite($data['partner_url']);
+
+            $entityManager->persist($partner);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Partenaire créé/modifié avec succès !');
+            return $this->redirectToRoute('app_dashboard');
         }
 
         return $this->render('dashboard.html.twig', [
@@ -65,6 +86,7 @@ class DashboardController extends AbstractController
             'publicOutfits' => $publicOutfits,
             'topUserNames' => $topUserNames,
             'topUserOutfitCounts' => $topUserOutfitCounts,
+            'partners' => $partners,
             'users' => $users,
         ]);
     }
@@ -76,6 +98,19 @@ class DashboardController extends AbstractController
 
         if ($user) {
             $entityManager->remove($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_dashboard');
+    }
+
+    #[Route('/dashboard/partner/{id}/delete', name: 'delete_partner_admin', methods: ['POST'])]
+    public function deletePartner($id, EntityManagerInterface $entityManager, PartnerRepository $partnerRepository)
+    {
+        $partner = $partnerRepository->find($id);
+
+        if ($partner) {
+            $entityManager->remove($partner);
             $entityManager->flush();
         }
 

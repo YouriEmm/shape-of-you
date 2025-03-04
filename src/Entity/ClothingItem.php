@@ -32,7 +32,8 @@ class ClothingItem
     #[ORM\ManyToMany(targetEntity: Wardrobe::class, mappedBy: 'items')]
     private Collection $wardrobes;
 
-    #[ORM\ManyToOne(inversedBy: 'clothingItems')]
+    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'clothingItems')]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Partner $brand = null;
 
     #[ORM\Column(length: 255)]
