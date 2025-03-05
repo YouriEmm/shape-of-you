@@ -16,7 +16,7 @@ class Comment
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Publication $publication = null;
+    private ?Outfit $outfit = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -28,19 +28,23 @@ class Comment
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(targetEntity: Comment::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Comment $parent = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPublication(): ?Publication
+    public function getOutfit(): ?Outfit
     {
-        return $this->publication;
+        return $this->outfit;
     }
 
-    public function setPublication(?Publication $publication): static
+    public function setOutfit(?Outfit $outfit): static
     {
-        $this->publication = $publication;
+        $this->outfit = $outfit;
 
         return $this;
     }
@@ -77,6 +81,18 @@ class Comment
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getParent(): ?Comment
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Comment $parent): static
+    {
+        $this->parent = $parent;
 
         return $this;
     }

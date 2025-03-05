@@ -16,7 +16,7 @@ class Like
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Publication $publication = null;
+    private ?Outfit $outfit = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
     private ?User $owner = null;
@@ -26,14 +26,14 @@ class Like
         return $this->id;
     }
 
-    public function getPublication(): ?Publication
+    public function getOutfit(): ?Outfit
     {
-        return $this->publication;
+        return $this->outfit;
     }
 
-    public function setPublication(?Publication $publication): static
+    public function setOutfit(?Outfit $outfit): static
     {
-        $this->publication = $publication;
+        $this->outfit = $outfit;
 
         return $this;
     }

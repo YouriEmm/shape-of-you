@@ -24,7 +24,25 @@ class AppFixtures extends Fixture
         $randomRole = $roles[array_rand($roles)];
 
 
-        for ($i = 0; $i < 10; $i++) {
+        $userAdmin = new User();
+        $userAdmin->setName("User1")
+        ->setEmail("user1@gmail.com")
+        ->setPassword(password_hash('123', PASSWORD_BCRYPT))
+            ->setRoles(['ROLE_ADMIN']);
+
+        $manager->persist($userAdmin);
+
+
+        $userClassic = new User();
+        $userClassic->setName("User2")
+            ->setEmail("user2@gmail.com")
+            ->setPassword(password_hash('123', PASSWORD_BCRYPT))
+            ->setRoles(['ROLE_USER']);
+
+        $manager->persist($userClassic);
+
+
+        for ($i = 0; $i < 5; $i++) {
             $randomRole = $roles[array_rand($roles)];
             $user = new User();
             $user->setName($faker->name)
@@ -43,7 +61,7 @@ class AppFixtures extends Fixture
                 $outfit->setName($faker->word)
                     ->setOwner($user)
                     ->setCreatedAt($faker->dateTimeThisYear)
-                    ->setPublic(false);
+                    ->setPublic(true);
                 $manager->persist($outfit);
 
                 for ($k = 0; $k < 5; $k++) {

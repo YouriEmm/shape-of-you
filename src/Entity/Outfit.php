@@ -38,19 +38,28 @@ class Outfit
     private Collection $historyEntries;
 
     /**
-     * @var Collection<int, Publication>
+     * @var Collection<int, Like>
      */
-    #[ORM\OneToMany(targetEntity: Publication::class, mappedBy: 'outfit')]
-    private Collection $publications;
+    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'outfit', cascade: ['remove'])]
+    private Collection $likes;
 
     #[ORM\Column]
     private ?bool $public = null;
+
+
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'outfit', cascade: ['remove'])]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
         $this->historyEntries = new ArrayCollection();
-        $this->publications = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -148,34 +157,35 @@ class Outfit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Publication>
-     */
-    public function getPublications(): Collection
+    public function getLikes(): Collection
     {
-        return $this->publications;
+        return $this->likes;
     }
-
-    public function addPublication(Publication $publication): static
+    
+    public function addLike(Like $like): static
     {
-        if (!$this->publications->contains($publication)) {
-            $this->publications->add($publication);
-            $publication->setOutfit($this);
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setOutfit($this);
         }
-
+    
         return $this;
     }
-
-    public function removePublication(Publication $publication): static
+    
+    public function removeLike(Like $like): static
     {
-        if ($this->publications->removeElement($publication)) {
-            // set the owning side to null (unless already changed)
-            if ($publication->getOutfit() === $this) {
-                $publication->setOutfit(null);
+        if ($this->likes->removeElement($like)) {
+            if ($like->getOutfit() === $this) {
+                $like->setOutfit(null);
             }
         }
-
+    
         return $this;
+    }
+
+    public function getLikesCount(): int
+    {
+        return $this->likes->count();
     }
 
     public function isPublic(): ?bool
@@ -186,6 +196,32 @@ class Outfit
     public function setPublic(bool $public): static
     {
         $this->public = $public;
+
+        return $this;
+    }
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setOutfit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            if ($comment->getOutfit() === $this) {
+                $comment->setOutfit(null);
+            }
+        }
 
         return $this;
     }

@@ -46,12 +46,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $historyEntries;
 
     /**
-     * @var Collection<int, Publication>
-     */
-    #[ORM\OneToMany(targetEntity: Publication::class, mappedBy: 'owner', orphanRemoval: true)]
-    private Collection $publications;
-
-    /**
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'owner', orphanRemoval: true)]
@@ -73,7 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->outfits = new ArrayCollection();
         $this->historyEntries = new ArrayCollection();
-        $this->publications = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
         $this->detectedClothing = new ArrayCollection();
@@ -203,35 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->historyEntries->removeElement($historyEntry)) {
             if ($historyEntry->getOwner() === $this) {
                 $historyEntry->setOwner(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Publication>
-     */
-    public function getPublications(): Collection
-    {
-        return $this->publications;
-    }
-
-    public function addPublication(Publication $publication): static
-    {
-        if (!$this->publications->contains($publication)) {
-            $this->publications->add($publication);
-            $publication->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    public function removePublication(Publication $publication): static
-    {
-        if ($this->publications->removeElement($publication)) {
-            if ($publication->getOwner() === $this) {
-                $publication->setOwner(null);
             }
         }
 
