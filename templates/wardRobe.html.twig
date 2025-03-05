@@ -32,4 +32,34 @@
     {% else %}
         <p class="dark:text-gray-300">Aucun vêtement disponible.</p>
     {% endfor %}
+
+<div class="mt-6">
+        <h2 class="text-xl font-semibold dark:text-white mb-4">Ajouter un nouveau vêtement</h2>
+        <form action="{{ path('add_to_wardrobe_custom') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <div>
+                <label for="name" class="text-gray-700 dark:text-white">Nom du vêtement</label>
+                <input type="text" name="name" id="name" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Nom du vêtement">
+            </div>
+
+            <div>
+                <label for="category" class="text-gray-700 dark:text-white">Catégorie</label>
+                <input type="text" name="category" id="category" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Catégorie">
+            </div>
+
+            <div>
+                <label for="image" class="text-gray-700 dark:text-white">Choisir une image</label>
+                <input type="file" name="image" id="image" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full">
+            </div>
+
+            <div>
+                <label for="brand" class="text-gray-700 dark:text-white">Marque</label>
+                <input type="text" name="brand" id="brand" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Marque">
+            </div>
+
+            <button type="submit" class="bg-green-500 dark:bg-green-600 text-white p-2 rounded hover:bg-green-600 dark:hover:bg-green-500">
+                Ajouter le vêtement
+            </button>
+        </form>
+    </div>
+
 {% endblock %}

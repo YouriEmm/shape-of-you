@@ -141,5 +141,81 @@ class WardrobeController extends AbstractController
     
         return $this->render('user/new.html.twig');
     }
+    #[Route('/wardrobe/addCustom', name: 'add_to_wardrobe_custom', methods: ['POST'])]
+    public function addToWardrobeCustom(
+        Request $request, 
+        ClothingItemRepository $clothingItemRepository, 
+        PartnerRepository $brandRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
 
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur n\'est pas valide.');
+        }
+
+        $name = $request->request->get('name');
+        $category = $request->request->get('category');
+        $brandName = $request->request->get('brand'); 
+
+
+        $file = $request->files->get('image');
+        if ($file) {
+            $uploadDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads';
+            $fileName = uniqid() . '.' . $file->guessExtension();
+
+            if (!is_dir($uploadDirectory)) {
+                mkdir($uploadDirectory, 0777, true);
+            }
+
+            try {
+                $file->move($uploadDirectory, $fileName);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                return $this->redirectToRoute('home');
+            }
+        } else {
+            $this->addFlash('error', 'Aucune image fournie.');
+            return $this->redirectToRoute('home');
+        }
+
+        $existingItem = $clothingItemRepository->findOneBy(['name' => $name, 'image' => $fileName]);
+
+        if ($existingItem) {
+            $clothingItem = $existingItem;
+        } else {
+            $clothingItem = new ClothingItem();
+            $clothingItem->setName($name);
+            $clothingItem->setImage('/uploads/' . $fileName);
+            $clothingItem->setCategory($category);
+
+            $brand = $brandRepository->findOneBy(['name' => $brandName]);
+
+            if (!$brand) {
+                $brand = new Partner(); 
+                $brand->setName($brandName);
+                $entityManager->persist($brand);
+            }
+
+            $clothingItem->setBrand($brand);
+            $entityManager->persist($clothingItem);
+            $entityManager->flush();
+        }
+
+        $wardrobe = $user->getWardrobe();
+        if (!$wardrobe) {
+            $wardrobe = new Wardrobe();
+            $wardrobe->setOwner($user);
+            $entityManager->persist($wardrobe);
+            $entityManager->flush();
+        }
+
+        $wardrobe->addItem($clothingItem);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('wardrobe_list');
+    }
 }
