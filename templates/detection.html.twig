@@ -1,5 +1,3 @@
-{# templates/detection.html.twig #}
-
 {% extends "base.html.twig" %}
 
 {% block body %}
@@ -11,45 +9,43 @@
             </p>
         </header>
 
-        <form action="{{ path('detect_clothing') }}" method="POST" enctype="multipart/form-data"
-              class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        {{ form_start(formDetectionImage) }}
             <label for="image" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                 Choisissez une image ou prenez une photo :
             </label>
-            <input type="file" name="image" id="image" accept="image/*" capture="environment" required
+            <input type="file" name="{{formDetectionImage.image.vars.full_name}}" id="image" accept="image/*" capture="environment" required
                 class="block w-full text-sm text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md mb-4 p-2 bg-gray-100 dark:bg-gray-700">
             <button type="submit"
                 class="w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-600">
                 Envoyer
             </button>
-        </form>
+            {{form_widget(formDetectionImage._token)}}
+        {{ form_end(formDetectionImage, {render_rest: false}) }}
 
-        {% if detected_clothing %}
+        {% if detectedItems %}
             <section class="mt-8">
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">Résultats de la détection :</h2>
                 <div class="mt-4 flex justify-center">
-                    {% set first_clothing = detected_clothing|first %}
-                    <img src="{{ first_clothing.image_path }}" alt="Outfit détecté"
-                         class="max-w-full rounded-lg shadow-lg">
+                    {% set first_clothing = detectedItems|first %}
+                    <img src="{{ image_path }}" alt="Outfit détecté"class="max-w-full rounded-lg shadow-lg">
                 </div>
                 <ul class="mt-6 space-y-4">
-                    {% for clothing in detected_clothing %}
+                    {% for clothing in detectedItems %}
                         <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                            <strong class="text-lg text-gray-800 dark:text-white">{{ clothing.nom }}</strong><br>
-                            <span class="text-gray-600 dark:text-gray-300">Catégorie: {{ clothing.category }}</span><br>
-                            <span class="text-gray-600 dark:text-gray-300">Marque: {{ clothing.brand }}</span><br>
+                            <strong class="text-lg text-gray-800 dark:text-white">{{ clothing.Nom }}</strong><br>
+                            <span class="text-gray-600 dark:text-gray-300">Catégorie: {{ clothing.categorie }}</span><br>
+                            <span class="text-gray-600 dark:text-gray-300">Marque: {{ clothing.Marque }}</span><br>
 
-                            <form action="{{ path('add_to_wardrobe') }}" method="POST" class="mt-2">
-                                <input type="hidden" name="name" value="{{ clothing.nom }}">
-                                <input type="hidden" name="category" value="{{ clothing.category }}">
-                                <input type="hidden" name="image" value="{{ clothing.image_path }}">
-                                <input type="hidden" name="brand" value="{{ clothing.brand }}">
+                            <form action="{{ path('app_clothing_item_new') }}" method="POST" class="mt-2">
+                                <input type="hidden" name="name" value="{{ clothing.Nom }}">
+                                <input type="hidden" name="category" value="{{ clothing.categorie }}">
+                                <input type="hidden" name="image" value="{{ image_path }}">
+                                <input type="hidden" name="brand" value="{{ clothing.Marque }}">
                                 <button type="submit"
                                     class="bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-400">
                                     Ajouter à ma garde-robe
                                 </button>
                             </form>
-
                         </li>
                     {% endfor %}
                 </ul>

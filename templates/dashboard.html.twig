@@ -6,6 +6,18 @@
 <div class="max-w-4xl mx-auto mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-6">Dashboard Admin</h2>
 
+    {% if iaNotifs is not empty %}
+        <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md mb-4">
+            {% for notif in iaNotifs %}
+                <div class="mb-2">
+                    <p class="font-bold">{{ notif.message }}</p>
+                    <p class="text-sm opacity-75">{{ notif.createdAt|date("d/m/Y H:i") }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
             <h3 class="text-xl font-semibold dark:text-white">Statistiques Générales</h3>

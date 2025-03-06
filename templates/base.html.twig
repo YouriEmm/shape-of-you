@@ -38,6 +38,43 @@
                 localStorage.setItem("theme", "light");
             }
         });
+
+    function showError(message, success) {
+        let div = document.createElement("div");
+        if(success == true){
+            div.textContent = "SUCCESS : " + message;
+            div.style.backgroundColor = "green";
+            div.style.color = "white";
+        }
+        else{
+            div.textContent = "ERREUR : " + message;
+            div.style.backgroundColor = "red";
+            div.style.color = "black";
+        }
+        div.style.top = "20px";
+        div.style.right = "20px";
+                    div.style.position = "fixed";
+        div.style.padding = "10px 15px";
+        div.style.borderRadius = "5px";
+        div.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+        div.style.fontWeight = "bold";
+        div.style.zIndex = "1000";
+
+        document.body.appendChild(div);
+
+        setTimeout(() => {
+            div.remove();
+        }, 3000);
+    }
+    
+    {% for message in app.flashes('error') %}
+            showError("{{ message }}", false);
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+            showError("{{ message }}", true);
+    {% endfor %}
+
+
     </script>
 
 </body>

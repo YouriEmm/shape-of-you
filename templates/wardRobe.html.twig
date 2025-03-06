@@ -15,51 +15,52 @@
 
             {% if clothingItem.brand %}
                 {% if clothingItem.brand.website %}
-                    <p class="text-blue-600 dark:text-blue-900">Marque : <a href="{{ clothingItem.brand.website }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ clothingItem.brand.name }}</a></p>
+                    <p class="mb-4 text-blue-600 dark:text-blue-900">Marque : <a href="{{ clothingItem.brand.website }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ clothingItem.brand.name }}</a></p>
                 {% else %}
-                    <p class="text-gray-600 dark:text-gray-400">Marque : {{ clothingItem.brand.name }}</p>
+                    <p class="mb-4 text-gray-600 dark:text-gray-400">Marque : {{ clothingItem.brand.name }}</p>
                 {% endif %}
             {% else %}
-                <p class="text-gray-600 dark:text-gray-400">Marque : Non spécifiée</p>
+                <p class="mb-4 text-gray-600 dark:text-gray-400">Marque : Non spécifiée</p>
             {% endif %}
 
-            <form action="{{ path('delete_clothing_item', {'id': clothingItem.id}) }}" method="POST" class="mt-4">
-                <button type="submit" class="bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-500">
-                    Supprimer
-                </button>
+            <form method="post" action="{{ path('app_clothing_item_delete', {'id': clothingItem.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothingItem.id) }}">
+                <button class="btn mt-4 bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-500">Delete</button>
             </form>
+
         </div>
     {% else %}
         <p class="dark:text-gray-300">Aucun vêtement disponible.</p>
-    {% endfor %}
-
-<div class="mt-6">
+    {% endfor %}    
+    
+    <div class="mt-6">
         <h2 class="text-xl font-semibold dark:text-white mb-4">Ajouter un nouveau vêtement</h2>
-        <form action="{{ path('add_to_wardrobe_custom') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-            <div>
-                <label for="name" class="text-gray-700 dark:text-white">Nom du vêtement</label>
-                <input type="text" name="name" id="name" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Nom du vêtement">
-            </div>
+        {{ form_start(formClothingItem) }}
+            <div class="space-y-4">
+                <div>
+                    {{ form_label(formClothingItem.name, 'Nom du vêtement', {'attr': {'class': 'text-gray-700 dark:text-white'}}) }}
+                    {{ form_widget(formClothingItem.name, {'attr': {'class': 'border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full'}}) }}
+                </div>
 
-            <div>
-                <label for="category" class="text-gray-700 dark:text-white">Catégorie</label>
-                <input type="text" name="category" id="category" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Catégorie">
-            </div>
+                <div>
+                    {{ form_label(formClothingItem.category, 'Catégorie', {'attr': {'class': 'text-gray-700 dark:text-white'}}) }}
+                    {{ form_widget(formClothingItem.category, {'attr': {'class': 'border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full'}}) }}
+                </div>
 
-            <div>
-                <label for="image" class="text-gray-700 dark:text-white">Choisir une image</label>
-                <input type="file" name="image" id="image" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full">
-            </div>
+                <div>
+                    {{ form_label(formClothingItem.image, 'Choisir une image', {'attr': {'class': 'text-gray-700 dark:text-white'}}) }}
+                    {{ form_widget(formClothingItem.image, {'attr': {'class': 'border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full'}}) }}
+                </div>
 
-            <div>
-                <label for="brand" class="text-gray-700 dark:text-white">Marque</label>
-                <input type="text" name="brand" id="brand" required class="border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full" placeholder="Marque">
-            </div>
+                <div>
+                    {{ form_label(formClothingItem.brand, 'Marque', {'attr': {'class': 'text-gray-700 dark:text-white'}}) }}
+                    {{ form_widget(formClothingItem.brand, {'attr': {'class': 'border p-2 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full'}}) }}
+                </div>
 
-            <button type="submit" class="bg-green-500 dark:bg-green-600 text-white p-2 rounded hover:bg-green-600 dark:hover:bg-green-500">
-                Ajouter le vêtement
-            </button>
-        </form>
+                <button type="submit" class="bg-green-500 dark:bg-green-600 text-white p-2 rounded hover:bg-green-600 dark:hover:bg-green-500">
+                    Ajouter le vêtement
+                </button>
+            </div>
+        {{ form_end(formClothingItem) }}
     </div>
-
 {% endblock %}

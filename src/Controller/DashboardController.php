@@ -9,6 +9,7 @@ use App\Entity\Partner;
 use App\Repository\UserRepository;
 use App\Repository\OutfitRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\AINotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,12 +26,15 @@ class DashboardController extends AbstractController
         OutfitRepository $outfitRepository, 
         Request $request,
         EntityManagerInterface $entityManager,
-        PartnerRepository $partnerRepository
+        PartnerRepository $partnerRepository,
+        AINotificationRepository $aINotificationRepository
     ): Response {
         $totalUsers = $userRepository->count([]);
         $totalOutfits = $outfitRepository->count([]);
         $publicOutfits = $outfitRepository->count(['public' => true]);
     
+        $iaNotif = $aINotificationRepository->findAll();
+        
         $topUsers = $userRepository->createQueryBuilder('u')
             ->leftJoin('u.outfits', 'o')
             ->select('u.name, COUNT(o.id) as outfitCount')
@@ -88,6 +92,7 @@ class DashboardController extends AbstractController
             'topUserOutfitCounts' => $topUserOutfitCounts,
             'partners' => $partners,
             'users' => $users,
+            'iaNotifs' => $iaNotif
         ]);
     }
 
