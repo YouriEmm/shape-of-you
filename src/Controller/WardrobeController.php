@@ -78,7 +78,7 @@ final class WardrobeController extends AbstractController{
             return $this->redirectToRoute('wardrobe_list');
         }
 
-        return $this->render('wardrobe.html.twig', [
+        return $this->render('wardRobe.html.twig', [
             'clothingItems' => $clothingItems,
             'formClothingItem' => $formClothingItem->createView(),
         ]);
