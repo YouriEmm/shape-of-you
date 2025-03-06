@@ -16,6 +16,7 @@ use App\Repository\ClothingItemRepository;
 use App\Entity\ClothingItem;
 use App\Service\OpenAIService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Form\OutfitType;
 
 class OutfitController extends AbstractController
 {
@@ -42,6 +43,7 @@ class OutfitController extends AbstractController
                 'clothingItems' => [],
             ]);
         }
+        
 
         $clothingItems = $wardrobe->getItems();
 
@@ -51,39 +53,41 @@ class OutfitController extends AbstractController
         ]);
     }
 
-    #[Route('/outfits/create', name: 'create_outfit', methods: ['POST'])]
-    public function createOutfit(Request $request, EntityManagerInterface $em, ClothingItemRepository $clothingItemRepository)
+    #[Route('/outfits/create', name: 'create_outfit', methods: ['POST', 'GET'])]
+    public function createOutfit(Request $request, EntityManagerInterface $em)
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-
+    
         if (!$user instanceof User) {
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }
-
+    
         $outfit = new Outfit();
         $outfit->setOwner($user);
-        $isPublic = $request->get('public') === 'on';
-        $outfit->setPublic($isPublic);        $outfit->setCreatedAt(new \DateTime());
-        $outfitName = $request->get('name');
-        $selectedItems = $request->get('items', []);
+        $outfit->setCreatedAt(new \DateTime());
+    
+        $form = $this->createForm(OutfitType::class, $outfit, [
+            'csrf_protection' => false,
+        ]);
 
-        $outfit->setName($outfitName);
-
-        foreach ($selectedItems as $itemId) {
-            $item = $clothingItemRepository->find($itemId);
-            if ($item) {
-                $outfit->addItem($item);
+        $data = $request->request->all();
+        if ($data) {
+            $form->submit($data, false);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em->persist($outfit);
+                $em->flush();
+                
+                return $this->redirectToRoute('outfits_list');
             }
         }
-
-        $em->persist($outfit);
-        $em->flush();
-
+    
         return $this->redirectToRoute('outfits_list');
+
     }
+    
 
 
     #[Route('/public-outfits', name: 'public_outfits')]

@@ -6,24 +6,23 @@
     <div class="max-w-lg mx-auto mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 class="text-2xl font-semibold text-center text-gray-900 dark:text-white mb-6">Créer un utilisateur</h2>
 
-        <form method="POST" action="{{ path('app_user_new') }}">
-            <div class="mb-4">
-                <label for="name" class="block text-gray-700 dark:text-white">Nom</label>
-                <input type="text" id="name" name="name" class="w-full p-2 rounded border" required>
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+            <div>
+                {{ form_label(form.name, 'Nom', {'label_attr': {'class': 'block text-gray-700 dark:text-white'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'w-full p-2 rounded border'}}) }}
             </div>
 
-            <div class="mb-4">
-                <label for="email" class="block text-gray-700 dark:text-white">Email</label>
-                <input type="email" id="email" name="email" class="w-full p-2 rounded border" required>
+            <div>
+                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-gray-700 dark:text-white'}}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'w-full p-2 rounded border'}}) }}
             </div>
 
-            <div class="mb-4">
-                <label for="password" class="block text-gray-700 dark:text-white">Mot de passe</label>
-                <input type="password" id="password" name="password" class="w-full p-2 rounded border" required>
+            <div>
+                {{ form_label(form.password, 'Mot de passe', {'label_attr': {'class': 'block text-gray-700 dark:text-white'}}) }}
+                {{ form_widget(form.password, {'attr': {'class': 'w-full p-2 rounded border'}}) }}
             </div>
 
             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg">Créer</button>
-        </form>
-
+        {{ form_end(form) }}
     </div>
 {% endblock %}

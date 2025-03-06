@@ -2,24 +2,21 @@
 
 namespace App\Controller;
 
-use App\Entity\ClothingItem;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
-use App\Entity\Wardrobe;
-use App\Entity\AINotification;
-use App\Repository\ClothingItemRepository;
-use App\Repository\PartnerRepository;
-use App\Entity\Partner;
+use App\Form\ClothingItemType;
+use App\Form\UserType;
+use App\Entity\ClothingItem;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Form\ClothingItemType; 
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
-class WardrobeController extends AbstractController
-{
+#[Route('/wardrobe')]
+final class WardrobeController extends AbstractController{
 
     #[Route('/wardrobe', name: 'wardrobe_list')]
     public function viewWardrobe( EntityManagerInterface $entityManager, Request $request,): Response
@@ -34,7 +31,6 @@ class WardrobeController extends AbstractController
         if (!$user instanceof User) {
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }
-
         
         $wardrobe = $user->getWardrobe();
         if (!$wardrobe) {
@@ -90,36 +86,31 @@ class WardrobeController extends AbstractController
 
     /* décalé car dans le userController marche pas jsp pourquoi */
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        if ($request->isMethod('POST')) {
-            $user = new User();
-    
-            $name = $request->request->get('name');
-            $email = $request->request->get('email');
-            $password = $request->request->get('password');
-    
-            if (!$name || !$email || !$password) {
-                $this->addFlash('error', 'Tous les champs sont requis.');
-                return $this->redirectToRoute('app_user_new');
-            }
-    
-            $user->setName($name);
-            $user->setEmail($email);
-            
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
-    
             $user->setRoles(['ROLE_USER']);
-    
+
             $entityManager->persist($user);
             $entityManager->flush();
-    
+
             $this->addFlash('success', 'Compte créé avec succès !');
             return $this->redirectToRoute('home');
         }
-    
-        return $this->render('user/new.html.twig');
+
+        return $this->render('user/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
 }

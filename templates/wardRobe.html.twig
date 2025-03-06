@@ -1,38 +1,48 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1 class="text-2xl font-bold mb-4 dark:text-white">Garde Robe</h1>
+    <h1 class="text-2xl font-bold mb-4 dark:text-white">Tableau de bord</h1>
 
-    {% for clothingItem in clothingItems %}
-        <div class="border p-4 rounded-lg shadow-lg mb-4 bg-white dark:bg-gray-800 dark:text-gray-300">
-            <h2 class="text-lg font-semibold dark:text-white">{{ clothingItem.name }}</h2>
-
-            {% if clothingItem.image %}
-                <img src="{{ asset(clothingItem.image) }}" alt="{{ clothingItem.name }}" class="w-32 h-32 object-cover mt-2">
-            {% endif %}
-
-            <p class="text-gray-600 dark:text-gray-400">Catégorie : {{ clothingItem.category }}</p>
-
-            {% if clothingItem.brand %}
-                {% if clothingItem.brand.website %}
-                    <p class="mb-4 text-blue-600 dark:text-blue-900">Marque : <a href="{{ clothingItem.brand.website }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ clothingItem.brand.name }}</a></p>
-                {% else %}
-                    <p class="mb-4 text-gray-600 dark:text-gray-400">Marque : {{ clothingItem.brand.name }}</p>
-                {% endif %}
-            {% else %}
-                <p class="mb-4 text-gray-600 dark:text-gray-400">Marque : Non spécifiée</p>
-            {% endif %}
-
-            <form method="post" action="{{ path('app_clothing_item_delete', {'id': clothingItem.id}) }}">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothingItem.id) }}">
-                <button class="btn mt-4 bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600 dark:hover:bg-red-500">Delete</button>
-            </form>
-
+    <!-- Navigation des onglets -->
+    <div class="mb-4">
+        <div class="flex space-x-4">
+            <button id="stats-tab" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600">Statistiques</button>
+            <button id="users-tab" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600">Utilisateurs</button>
+            <button id="brands-tab" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600">Marques</button>
         </div>
-    {% else %}
-        <p class="dark:text-gray-300">Aucun vêtement disponible.</p>
-    {% endfor %}    
-    
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div id="stats-content" class="tab-content">
+        <h2 class="text-xl font-semibold dark:text-white">Statistiques</h2>
+        <p class="dark:text-gray-300">Voici les statistiques de votre garde-robe.</p>
+        <!-- Ajoutez vos stats ici -->
+    </div>
+
+    <div id="users-content" class="tab-content hidden">
+        <h2 class="text-xl font-semibold dark:text-white">Utilisateurs</h2>
+        <p class="dark:text-gray-300">Voici la liste des utilisateurs.</p>
+        <!-- Liste des utilisateurs -->
+        {% for user in users %}
+            <div class="border p-4 rounded-lg shadow-lg mb-4 bg-white dark:bg-gray-800 dark:text-gray-300">
+                <h3 class="font-semibold">{{ user.username }}</h3>
+                <p>{{ user.email }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="brands-content" class="tab-content hidden">
+        <h2 class="text-xl font-semibold dark:text-white">Marques</h2>
+        <p class="dark:text-gray-300">Voici la liste des marques disponibles.</p>
+        <!-- Liste des marques -->
+        {% for brand in brands %}
+            <div class="border p-4 rounded-lg shadow-lg mb-4 bg-white dark:bg-gray-800 dark:text-gray-300">
+                <h3 class="font-semibold">{{ brand.name }}</h3>
+                <p>{{ brand.website ? brand.website : 'Site non spécifié' }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
     <div class="mt-6">
         <h2 class="text-xl font-semibold dark:text-white mb-4">Ajouter un nouveau vêtement</h2>
         {{ form_start(formClothingItem) }}
@@ -63,4 +73,30 @@
             </div>
         {{ form_end(formClothingItem) }}
     </div>
+
+    <script>
+        document.getElementById('stats-tab').addEventListener('click', function() {
+            switchTab('stats');
+        });
+
+        document.getElementById('users-tab').addEventListener('click', function() {
+            switchTab('users');
+        });
+
+        document.getElementById('brands-tab').addEventListener('click', function() {
+            switchTab('brands');
+        });
+
+        function switchTab(tab) {
+            const tabs = ['stats', 'users', 'brands'];
+            tabs.forEach(function(tabId) {
+                document.getElementById(tabId + '-content').classList.add('hidden');
+                document.getElementById(tabId + '-tab').classList.remove('bg-blue-600');
+            });
+
+            document.getElementById(tab + '-content').classList.remove('hidden');
+            document.getElementById(tab + '-tab').classList.add('bg-blue-600');
+        }
+    </script>
+
 {% endblock %}

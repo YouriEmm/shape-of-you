@@ -6,127 +6,144 @@
 <div class="max-w-4xl mx-auto mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md">
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-6">Dashboard Admin</h2>
 
-    {% if iaNotifs is not empty %}
-        <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md mb-4">
-            {% for notif in iaNotifs %}
-                <div class="mb-2">
-                    <p class="font-bold">{{ notif.message }}</p>
-                    <p class="text-sm opacity-75">{{ notif.createdAt|date("d/m/Y H:i") }}</p>
+    <div class="mb-4">
+        <div class="flex border-b border-gray-300">
+            <button id="statsTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('stats')">Statistiques</button>
+            <button id="usersTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('users')">Utilisateurs</button>
+            <button id="partnersTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('partners')">Partenaires</button>
+        </div>
+    </div>
+
+    <div id="stats" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                <h3 class="text-xl font-semibold dark:text-white">Statistiques Générales</h3>
+                <p class="text-gray-800 dark:text-gray-300">Total Utilisateurs : <strong>{{ totalUsers }}</strong></p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow w-full">
+                <h3 class="text-xl font-semibold dark:text-white mb-2">Top 5 Utilisateurs avec le plus d'outfits</h3>
+                <div class="w-full">
+                    <canvas id="topUsersChart"></canvas>
                 </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-            <h3 class="text-xl font-semibold dark:text-white">Statistiques Générales</h3>
-            <p class="text-gray-800 dark:text-gray-300">Total Utilisateurs : <strong>{{ totalUsers }}</strong></p>
-
-        </div>
-
-        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow w-full">
-            <h3 class="text-xl font-semibold dark:text-white mb-2">Top 5 Utilisateurs avec le plus d'outfits</h3>
-            <div class="w-full">
-                <canvas id="topUsersChart"></canvas>
             </div>
-        </div>
 
-        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-            <h3 class="text-xl font-semibold dark:text-white">Outfits Publics vs Privés</h3>
-            <canvas id="outfitChart"></canvas>
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+                <h3 class="text-xl font-semibold dark:text-white">Outfits Publics vs Privés</h3>
+                <canvas id="outfitChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-        <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Utilisateur</h3>
-        <form method="POST" action="{{ path('app_dashboard') }}">
-            <input type="hidden" name="user_submit" value="1">
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-semibold text-gray-700">Nom</label>
-                <input type="text" id="name" name="name" class="mt-1 p-2 w-full rounded border" required>
-            </div>
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-semibold text-gray-700">Email</label>
-                <input type="email" id="email" name="email" class="mt-1 p-2 w-full rounded border" required>
-            </div>
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-semibold text-gray-700">Mot de Passe</label>
-                <input type="password" id="password" name="password" class="mt-1 p-2 w-full rounded border" required>
-            </div>
-            <div class="mb-4">
-                <input type="hidden" id="id" name="id" value="">
-            </div>
-            <button type="submit" class="bg-blue-500 text-white p-2 rounded">Enregistrer</button>
-        </form>
+    <div id="users" class="tab-content hidden">
+        <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Utilisateur</h3>
+            <form method="POST" action="{{ path('app_dashboard') }}">
+                <input type="hidden" name="user_submit" value="1">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-semibold text-gray-700">Nom</label>
+                    <input type="text" id="name" name="name" class="mt-1 p-2 w-full rounded border" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-semibold text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" class="mt-1 p-2 w-full rounded border" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-semibold text-gray-700">Mot de Passe</label>
+                    <input type="password" id="password" name="password" class="mt-1 p-2 w-full rounded border" required>
+                </div>
+                <div class="mb-4">
+                    <input type="hidden" id="id" name="id" value="">
+                </div>
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Enregistrer</button>
+            </form>
+        </div>
+
+        <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Liste des Utilisateurs</h3>
+            <ul class="space-y-4 mt-2">
+                {% for user in users %}
+                    <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <strong>
+                                <a href="{{ path('app_user_show', { 'id': user.id }) }}" class="text-lg dark:text-white" style="cursor: pointer">
+                                    {{ user.name }}
+                                </a>
+                            </strong>
+                            <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
+                        </div>
+                        <div>
+                            <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
+                            <form action="{{ path('delete_user_admin', {'id': user.id}) }}" method="POST" style="display:inline-block;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
-    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-        <h3 class="text-xl font-semibold dark:text-white">Liste des Utilisateurs</h3>
-        <ul class="space-y-4 mt-2">
-            {% for user in users %}
-                <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
-                    <div>
-                    <strong>
-                        <a href="{{ path('app_user_show', { 'id': user.id }) }}" class="text-lg dark:text-white" style="cursor: pointer">
-                            {{ user.name }}
-                        </a>
-                    </strong> 
-                        <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
-                    </div>
-                    <div>
-                        <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
-                        <form action="{{ path('delete_user_admin', {'id': user.id}) }}" method="POST" style="display:inline-block;">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="user_id" value="{{ user.id }}">
-                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
-                        </form>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <div id="partners" class="tab-content hidden">
+        <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Partenaire</h3>
+            <form method="POST" action="{{ path('app_dashboard') }}">
+                <input type="hidden" name="partner_submit" value="1">
+                <input type="hidden" id="partner_id" name="partner_id" value="">
+                <div class="mb-4">
+                    <label for="partner_name" class="block text-sm font-semibold text-gray-700">Nom</label>
+                    <input type="text" id="partner_name" name="partner_name" class="mt-1 p-2 w-full rounded border" required>
+                </div>
+                <div class="mb-4">
+                    <label for="partner_url" class="block text-sm font-semibold text-gray-700">URL</label>
+                    <input type="url" id="partner_url" name="partner_url" class="mt-1 p-2 w-full rounded border">
+                </div>
+                <button type="submit" class="bg-green-500 text-white p-2 rounded">Enregistrer</button>
+            </form>
+        </div>
 
-
-    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-        <h3 class="text-xl font-semibold dark:text-white">Créer/Modifier un Partenaire</h3>
-        <form method="POST" action="{{ path('app_dashboard') }}">
-            <input type="hidden" name="partner_submit" value="1">
-            <input type="hidden" id="partner_id" name="partner_id" value="">
-            <div class="mb-4">
-                <label for="partner_name" class="block text-sm font-semibold text-gray-700">Nom</label>
-                <input type="text" id="partner_name" name="partner_name" class="mt-1 p-2 w-full rounded border" required>
-            </div>
-            <div class="mb-4">
-                <label for="partner_url" class="block text-sm font-semibold text-gray-700">URL</label>
-                <input type="url" id="partner_url" name="partner_url" class="mt-1 p-2 w-full rounded border">
-            </div>
-            <button type="submit" class="bg-green-500 text-white p-2 rounded">Enregistrer</button>
-        </form>
-    </div>
-
-    <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-        <h3 class="text-xl font-semibold dark:text-white">Liste des Partenaires</h3>
-        <ul class="space-y-4 mt-2">
-            {% for partner in partners %}
-                <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
-                    <div>
-                        <strong class="text-lg dark:text-white">{{ partner.name }}</strong>
-                        <p class="text-gray-600 dark:text-gray-400"><a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a></p>
-                    </div>
-                    <div>
-                        <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editPartner('{{ partner.id }}', '{{ partner.name }}', '{{ partner.website }}')">Modifier</a>
-                        <form action="{{ path('delete_partner_admin', {'id': partner.id}) }}" method="POST" style="display:inline-block;">
-                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
-                        </form>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Liste des Partenaires</h3>
+            <ul class="space-y-4 mt-2">
+                {% for partner in partners %}
+                    <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <strong class="text-lg dark:text-white">{{ partner.name }}</strong>
+                            <p class="text-gray-600 dark:text-gray-400"><a href="{{ partner.website }}" target="_blank">{{ partner.website }}</a></p>
+                        </div>
+                        <div>
+                            <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editPartner('{{ partner.id }}', '{{ partner.name }}', '{{ partner.website }}')">Modifier</a>
+                            <form action="{{ path('delete_partner_admin', {'id': partner.id}) }}" method="POST" style="display:inline-block;">
+                                <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function showTab(tabName) {
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.add('hidden'));
+
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => button.classList.remove('border-blue-500'));
+
+        document.getElementById(tabName).classList.remove('hidden'); 
+        document.getElementById(tabName + 'Tab').classList.add('border-blue-500'); 
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        showTab('stats');
+    });
+
+
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var ctxUsers = document.getElementById("topUsersChart").getContext("2d");

@@ -3,52 +3,78 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Form\CommentType;
 use App\Entity\Outfit;
-use Symfony\Component\HttpFoundation\Request;
+use App\Entity\User;
+use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/comment')]
-class CommentController extends AbstractController
-{
+final class CommentController extends AbstractController{
+
+
+    // #[Route('/{id}', name: 'app_comment_delete', methods: ['POST'])]
+    // public function delete(Request $request, Comment $comment, EntityManagerInterface $entityManager): Response
+    // {
+    //     if ($this->isCsrfTokenValid('delete'.$comment->getId(), $request->getPayload()->getString('_token'))) {
+    //         $entityManager->remove($comment);
+    //         $entityManager->flush();
+    //     }
+
+    //     return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+    // }
 
     #[Route('/comment/{outfitId}', name: 'comment_create', methods: ['POST'])]
-    public function createComment(Request $request, EntityManagerInterface $em, $outfitId)
+    public function createComment(Request $request, EntityManagerInterface $em, int $outfitId): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-    
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur n\'est pas valide.');
+        }
+
         $outfit = $em->getRepository(Outfit::class)->find($outfitId);
-    
         if (!$outfit) {
             throw $this->createNotFoundException('Outfit non trouvé.');
         }
-    
-        $content = $request->get('content');
-        $parentId = $request->get('parentId');
-    
-        $comment = new Comment();
-        $comment->setContent($content);
-        $comment->setOutfit($outfit);
-        $comment->setOwner($user);
-        $comment->setCreatedAt(new \DateTimeImmutable());
-    
-        if ($parentId) {
-            $parentComment = $em->getRepository(Comment::class)->find($parentId);
+
+        $data = $request->request->all(); 
+
+        if (!empty($data['parent'])) {
+            $parentComment = $em->getRepository(Comment::class)->find($data['parent']);
             if ($parentComment) {
-                $comment->setParent($parentComment);
+                $data['parent'] = $parentComment;
+            } else {
+                unset($data['parent']); 
             }
         }
-    
-        // Enregistrer le commentaire
-        $em->persist($comment);
-        $em->flush();
-    
+
+        $data['outfit'] = $outfit->getId();
+        $data['owner'] = $user->getId();
+        $data['createdAt'] = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
+
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment, [
+            'csrf_protection' => false,
+        ]);
+        
+        $form->submit($data, false);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Commentaire ajouté avec succès.');
+            return $this->redirectToRoute('public_outfits');
+        }
+
+        $this->addFlash('error', 'Erreur lors de l\'ajout du commentaire.');
         return $this->redirectToRoute('public_outfits');
     }
-    
-
 }
