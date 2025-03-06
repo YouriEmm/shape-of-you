@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Wardrobe;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
 use App\Form\ClothingItemType;
@@ -93,6 +94,7 @@ final class WardrobeController extends AbstractController{
     ): Response {
         
         $user = new User();
+        $wardrobe = new Wardrobe();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -100,7 +102,7 @@ final class WardrobeController extends AbstractController{
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
             $user->setRoles(['ROLE_USER']);
-
+            $user->setWardrobe($wardrobe);
             $entityManager->persist($user);
             $entityManager->flush();
 
