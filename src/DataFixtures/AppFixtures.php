@@ -31,7 +31,9 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN']);
 
         $manager->persist($userAdmin);
-
+        $wardrobeAdmin = new Wardrobe();
+        $wardrobeAdmin->setOwner($userAdmin);
+        $manager->persist($wardrobeAdmin);
 
         $userClassic = new User();
         $userClassic->setName("User2")
@@ -40,7 +42,9 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_USER']);
 
         $manager->persist($userClassic);
-
+        $wardrobeClassic = new Wardrobe();
+        $wardrobeClassic->setOwner($userClassic);
+        $manager->persist($wardrobeClassic);
 
         for ($i = 0; $i < 5; $i++) {
             $randomRole = $roles[array_rand($roles)];

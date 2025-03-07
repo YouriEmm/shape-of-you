@@ -73,7 +73,8 @@ final class UserController extends AbstractController
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         if ($user !== $this->getUser()) {
-            throw $this->createAccessDeniedException("Vous ne pouvez modifier que votre propre profil.");
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
         }
 
         $form = $this->createForm(UserType::class, $user);

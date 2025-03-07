@@ -1,78 +1,91 @@
-<div class="md:w-2/12 bg-gray-500 text-white dark:bg-gray-800 dark:text-white h-screen fixed">
-    <div class="md:hidden fixed top-0.5 left-0.5 z-50">
-        <button class="text-black dark:text-white p-4" id="sidebar-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-    </div>
+<div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+	<div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+		<nav class="flex justify-between w-full">
+			<ul class="flex justify-between w-full">
+				<li>
+					<a href="{{ path('home') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('public_outfits') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('wardrobe_list') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122"/>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('outfits_list') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('detected_outfits_list') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('app_user_new') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+						</svg>
+					</a>
+				</li>
+				{% if is_granted('ROLE_ADMIN') %}
+					<li>
+						<a href="{{ path('app_dashboard') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M3 3h18M3 9h18M3 15h18M3 21h18"/>
+							</svg>
+						</a>
+					</li>
+				{% endif %}
+				{% if app.user %}
+					<li>
+						<a href="{{ path('app_user_profile') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="{{ path('app_user_list') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
+							</svg>
+						</a>
+					</li>
+					<li>
+						<a href="{{ path('app_logout') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 7.5l4.5 4.5-4.5 4.5M13.5 12H22M12 3v18"/>
+							</svg>
+						</a>
+					</li>
+				{% else %}
+					<li>
+						<a href="{{ path('app_login') }}" class="text-base md:text-lg hover:text-gray-700 dark:hover:text-gray-300">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 7.5l4.5 4.5-4.5 4.5M13.5 12H22M12 3v18"/>
+							</svg>
+						</a>
+					</li>
+				{% endif %}
 
-    <div class="sidebar bg-gray-500 dark:bg-gray-800 h-full p-4 hidden md:block">
-        <nav class="space-y-6">
-            <ul class="space-y-4 mt-8">
-                <li><a href="{{ path('home') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Menu</a></li>
-                <li><a href="{{ path('public_outfits') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Recherche</a></li>
-                <li><a href="{{ path('wardrobe_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Garde Robe</a></li>
-                <li><a href="{{ path('outfits_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Outfits</a></li>
-                <li><a href="{{ path('detected_outfits_list') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Historique</a></li>
-            </ul>
-        </nav>
-
-        {% if app.user is not null %}
-            <nav class="space-y-6 mt-8">
-                <ul>
-                    <li>
-                        <a href="{{ path('app_user_profile') }}" class="mt-4 block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">
-                            Mon Profil
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ path('app_user_list') }}" class="mt-4 block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">
-                            Utilisateurs
-                        </a>
-                    </li>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li><a href="{{ path('app_dashboard') }}" class="mt-4 block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Dashboard</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        {% endif %}
-
-        <div class="absolute bottom-8 w-full">
-            {% if app.user is null %}
-                <a href="{{ path('app_login') }}">
-                    <button class="w-2/3 bg-blue-500 text-white py-2 rounded-lg">
-                        Se connecter
-                    </button>
-                </a>
-                <nav class="space-y-6">
-                    <ul class="space-y-4 mt-8">
-                        <li><a href="{{ path('app_user_new') }}" class="block px-4 py-2 text-white hover:bg-gray-700 dark:hover:bg-gray-600 rounded">Créer un compte</a></li>
-                    </ul>
-                </nav>
-            {% else %}
-                <form action="{{ path('app_logout') }}" method="POST">
-                    <button type="submit" class="w-2/3 bg-red-500 text-white py-2 rounded-lg">
-                        Se déconnecter
-                    </button>
-                </form>
-            {% endif %}
-        </div>
-    </div>
-
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden md:hidden"></div>
+			</ul>
+		</nav>
+	</div>
 </div>
-
-<script>
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        sidebar.classList.toggle('hidden');
-        overlay.classList.toggle('hidden');
-    });
-
-    document.getElementById('sidebar-overlay').addEventListener('click', function() {
-        document.querySelector('.sidebar').classList.add('hidden');
-        document.getElementById('sidebar-overlay').classList.add('hidden');
-    });
-</script>

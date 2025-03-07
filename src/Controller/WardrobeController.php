@@ -32,18 +32,21 @@ final class WardrobeController extends AbstractController{
         if (!$user instanceof User) {
             throw new \LogicException('L\'utilisateur n\'est pas valide.');
         }
+
+        $formClothingItem = $this->createForm(ClothingItemType::class, $clothingItem);
+        $formClothingItem->handleRequest($request);
         
         $wardrobe = $user->getWardrobe();
         if (!$wardrobe) {
             return $this->render('wardrobe.html.twig', [
                 'clothingItems' => [],
+                'formClothingItem' => $formClothingItem->createView(),
             ]);
         }
 
         $clothingItems = $wardrobe->getItems();
 
-        $formClothingItem = $this->createForm(ClothingItemType::class, $clothingItem);
-        $formClothingItem->handleRequest($request);
+
     
         if ($formClothingItem->isSubmitted() && $formClothingItem->isValid()) {
 

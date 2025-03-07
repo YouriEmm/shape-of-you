@@ -38,6 +38,11 @@ final class PartnerController extends AbstractController{
     #[Route('/{id}/edit', name: 'app_partner_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+        
         $form = $this->createForm(PartnerType::class, $partner);
         $form->handleRequest($request);
 
@@ -56,6 +61,11 @@ final class PartnerController extends AbstractController{
     #[Route('/{id}', name: 'app_partner_delete', methods: ['POST'])]
     public function delete(Request $request, Partner $partner, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$partner->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($partner);
             $entityManager->flush();

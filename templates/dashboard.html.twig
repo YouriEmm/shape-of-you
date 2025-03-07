@@ -11,6 +11,8 @@
             <button id="statsTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('stats')">Statistiques</button>
             <button id="usersTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('users')">Utilisateurs</button>
             <button id="partnersTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('partners')">Partenaires</button>
+            <button id="notificationsTab" class="px-4 py-2 text-lg font-semibold text-gray-800 dark:text-white border-b-2 border-transparent hover:border-blue-500" onclick="showTab('notifications')">Notifications</button>
+
         </div>
     </div>
 
@@ -42,15 +44,15 @@
                 <input type="hidden" name="user_submit" value="1">
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-semibold text-gray-700">Nom</label>
-                    <input type="text" id="name" name="name" class="mt-1 p-2 w-full rounded border" required>
+                    <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-semibold text-gray-700">Email</label>
-                    <input type="email" id="email" name="email" class="mt-1 p-2 w-full rounded border" required>
+                    <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-semibold text-gray-700">Mot de Passe</label>
-                    <input type="password" id="password" name="password" class="mt-1 p-2 w-full rounded border" required>
+                    <input type="password" id="password" name="password" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div class="mb-4">
                     <input type="hidden" id="id" name="id" value="">
@@ -62,29 +64,41 @@
         <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
             <h3 class="text-xl font-semibold dark:text-white">Liste des Utilisateurs</h3>
             <ul class="space-y-4 mt-2">
-                {% for user in users %}
-                    <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
-                        <div>
-                            <strong>
-                                <a href="{{ path('app_user_show', { 'id': user.id }) }}" class="text-lg dark:text-white" style="cursor: pointer">
-                                    {{ user.name }}
-                                </a>
-                            </strong>
-                            <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
-                        </div>
-                        <div>
-                            <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
-                            <form action="{{ path('delete_user_admin', {'id': user.id}) }}" method="POST" style="display:inline-block;">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+            {% for user in users %}
+                <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <strong>
+                            <a href="{{ path('app_user_show', { 'id': user.id }) }}" class="text-lg dark:text-white" style="cursor: pointer">
+                                {{ user.name }}
+                            </a>
+                        </strong>
+                        <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <a href="#" class="bg-yellow-500 text-white p-2 rounded" onclick="editUser('{{ user.id }}', '{{ user.name }}', '{{ user.email }}')">Modifier</a>
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            <form action="{{ path('change_role_user', {'id': user.id, 'role': 'ROLE_USER'}) }}" method="POST" style="display:inline-block;">
+                                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Changer en User</button>
                             </form>
-                        </div>
-                    </li>
-                {% endfor %}
+                        {% else %}
+                            <form action="{{ path('change_role_user', {'id': user.id, 'role': 'ROLE_ADMIN'}) }}" method="POST" style="display:inline-block;">
+                                <button type="submit" class="bg-green-500 text-white p-2 rounded">Changer en Admin</button>
+                            </form>
+                        {% endif %}
+                        
+                        <form action="{{ path('delete_user_admin', {'id': user.id}) }}" method="POST" style="display:inline-block;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Supprimer</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+
             </ul>
         </div>
     </div>
+    
 
     <div id="partners" class="tab-content hidden">
         <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
@@ -94,11 +108,11 @@
                 <input type="hidden" id="partner_id" name="partner_id" value="">
                 <div class="mb-4">
                     <label for="partner_name" class="block text-sm font-semibold text-gray-700">Nom</label>
-                    <input type="text" id="partner_name" name="partner_name" class="mt-1 p-2 w-full rounded border" required>
+                    <input type="text" id="partner_name" name="partner_name" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div class="mb-4">
                     <label for="partner_url" class="block text-sm font-semibold text-gray-700">URL</label>
-                    <input type="url" id="partner_url" name="partner_url" class="mt-1 p-2 w-full rounded border">
+                    <input type="url" id="partner_url" name="partner_url" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 </div>
                 <button type="submit" class="bg-green-500 text-white p-2 rounded">Enregistrer</button>
             </form>
@@ -124,6 +138,23 @@
             </ul>
         </div>
     </div>
+
+    <div id="notifications" class="tab-content hidden">
+        <div class="mt-10 bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
+            <h3 class="text-xl font-semibold dark:text-white">Liste des Notifications</h3>
+            <ul class="space-y-4 mt-2">
+                {% for notification in iaNotifs %}
+                    <li class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">{{ notification.message }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-300">Créé le : {{ notification.createdAt|date('d/m/Y H:i') }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

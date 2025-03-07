@@ -68,7 +68,7 @@ class OutfitController extends AbstractController
         $outfit = new Outfit();
         $outfit->setOwner($user);
         $outfit->setCreatedAt(new \DateTime());
-    
+        
         $form = $this->createForm(OutfitType::class, $outfit, [
             'csrf_protection' => false,
         ]);
@@ -76,6 +76,9 @@ class OutfitController extends AbstractController
         $data = $request->request->all();
         if ($data) {
             $form->submit($data, false);
+            if (!isset($data['public'])) {
+                $outfit->setPublic(false);
+            }
             if ($form->isSubmitted() && $form->isValid()) {
                 $em->persist($outfit);
                 $em->flush();
@@ -190,6 +193,13 @@ class OutfitController extends AbstractController
 
     public function toggleOutfitPublic(Outfit $outfit, EntityManagerInterface $entityManager)
     {
+        $user = $this->getUser();
+
+        if (!$user || $outfit->getOwner() !== $user) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
         $outfit->setPublic(!$outfit->isPublic());
 
         $entityManager->persist($outfit);
@@ -201,6 +211,15 @@ class OutfitController extends AbstractController
     #[Route('/outfit/{id}/delete', name: 'delete_outfit', methods: ['POST'])]
     public function deleteClothingItem($id, EntityManagerInterface $entityManager, OutfitRepository $outfitRepository)
     {
+
+        $user = $this->getUser();
+        $outfit = $outfitRepository->find($id);
+
+        if (!$user || $outfit->getOwner() !== $user) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }    
+
         $clothingItem = $outfitRepository->find($id);
 
         if ($clothingItem) {
@@ -210,19 +229,5 @@ class OutfitController extends AbstractController
 
         return $this->redirectToRoute('outfits_list');
     }
-
-    #[Route('/outfit/{id}/deleteAdmin', name: 'delete_outfit_admin', methods: ['POST'])]
-    public function deleteClothingItemAdmin($id, EntityManagerInterface $entityManager, OutfitRepository $outfitRepository): Response
-    {
-        $clothingItem = $outfitRepository->find($id);
-
-        $userId = $clothingItem->getOwner()->getId(); 
-        $entityManager->remove($clothingItem);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_user_show', ['id' => $userId]);
-        
-    }
-    
 
 }

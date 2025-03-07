@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Wardrobe;
 
 #[Route('/admin')]
 class DashboardController extends AbstractController
@@ -29,6 +29,12 @@ class DashboardController extends AbstractController
         PartnerRepository $partnerRepository,
         AINotificationRepository $aINotificationRepository
     ): Response {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
         $totalUsers = $userRepository->count([]);
         $totalOutfits = $outfitRepository->count([]);
         $publicOutfits = $outfitRepository->count(['public' => true]);
@@ -53,9 +59,13 @@ class DashboardController extends AbstractController
         if ($request->isMethod('POST') && $request->request->has('user_submit')) {
             $data = $request->request->all();
             $userId = $data['id'] ?? null;
-            
+
             $user = $userId ? $userRepository->find($userId) : new User();
             
+            if (!$userId) {
+                $wardrobe = new Wardrobe();
+                $user->setWardrobe($wardrobe);  
+            }            
             $user->setName($data['name']);
             $user->setEmail($data['email']);
             $user->setPassword(password_hash($data['password'], PASSWORD_BCRYPT));
@@ -99,6 +109,11 @@ class DashboardController extends AbstractController
     #[Route('/dashboard/user/{id}/delete', name: 'delete_user_admin', methods: ['POST'])]
     public function deleteClothingItem($id, EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
         $user = $userRepository->find($id);
 
         if ($user) {
@@ -112,6 +127,11 @@ class DashboardController extends AbstractController
     #[Route('/dashboard/partner/{id}/delete', name: 'delete_partner_admin', methods: ['POST'])]
     public function deletePartner($id, EntityManagerInterface $entityManager, PartnerRepository $partnerRepository)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
         $partner = $partnerRepository->find($id);
 
         if ($partner) {
@@ -120,6 +140,48 @@ class DashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('app_dashboard');
+    }
+
+
+    #[Route('/dashboard/user/{id}/role/{role}', name: 'change_role_user', methods: ['POST'])]
+    public function changeRoleUser($id, $role, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+
+        $user = $userRepository->find($id);
+
+        if ($user) {
+            $user->setRoles([$role]);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le rôle de l\'utilisateur a été modifié avec succès !');
+        } else {
+            $this->addFlash('error', 'Utilisateur non trouvé.');
+        }
+
+        return $this->redirectToRoute('app_dashboard');
+    }
+
+    #[Route('/outfit/{id}/deleteAdmin', name: 'delete_outfit_admin', methods: ['POST'])]
+    public function deleteClothingItemAdmin($id, EntityManagerInterface $entityManager, OutfitRepository $outfitRepository): Response
+    {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Permission Invalide');
+            return $this->redirectToRoute('home');
+        }
+        
+        $clothingItem = $outfitRepository->find($id);
+
+        $userId = $clothingItem->getOwner()->getId(); 
+        $entityManager->remove($clothingItem);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_user_show', ['id' => $userId]);
+        
     }
 
 }
